@@ -32,7 +32,8 @@
          Grid.Row="1"
          Margin="0,0,0,3"
          AcceptsReturn="True"
-         VerticalScrollBarVisibility="Auto" TextChanged="OnRichTextBoxTextChanged">
+         TextChanged="OnRichTextBoxTextChanged"
+         VerticalScrollBarVisibility="Auto">
          <RichTextBox.Background>
             <SolidColorBrush Color="{DynamicResource BG.Light}" />
          </RichTextBox.Background>

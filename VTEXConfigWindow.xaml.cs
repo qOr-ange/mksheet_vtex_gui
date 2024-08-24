@@ -86,23 +86,18 @@ namespace ValveSpriteSheetUtil
          var caretPosition = InputTextBox.CaretPosition;
          if (caretPosition != null)
          {
-            // Get the entire word at the caret position
             var currentWord = GetCurrentWord(caretPosition);
-            // Check if the current word is not empty
             if (!string.IsNullOrEmpty(currentWord))
             {
-               // Filter suggestions based on the current word
                var suggestions = ValidParams
                    .Where(p => p.StartsWith(currentWord, StringComparison.OrdinalIgnoreCase))
                    .ToList();
 
-               // Update the autocomplete list and popup
                if (suggestions.Any())
                {
                   AutocompleteListBox.ItemsSource = suggestions;
                   AutocompletePopup.IsOpen = true;
 
-                  // Position the Popup
                   PositionAutocompletePopup(caretPosition);
                }
                else
@@ -119,23 +114,20 @@ namespace ValveSpriteSheetUtil
 
       private void PositionAutocompletePopup(TextPointer caretPosition)
       {
-         // Get the location of the caret
          var rect = caretPosition.GetCharacterRect(LogicalDirection.Backward);
          var transform = InputTextBox.TransformToAncestor(this);
          var popupTopLeft = transform.Transform(new Point(rect.X, rect.Y + rect.Height));
 
-         // Adjust the Popup's placement to be higher
-         const double verticalOffsetAdjustment = 20; // Adjust this value as needed
+         const double verticalOffsetAdjustment = 20;
          AutocompletePopup.HorizontalOffset = popupTopLeft.X;
          AutocompletePopup.VerticalOffset = popupTopLeft.Y - verticalOffsetAdjustment;
 
-         // Ensure the Popup is within the bounds of the Window
          var windowWidth = this.ActualWidth;
          var popupWidth = AutocompletePopup.ActualWidth;
 
          if (popupTopLeft.X + popupWidth > windowWidth)
          {
-            AutocompletePopup.HorizontalOffset = windowWidth - popupWidth - 10; // Leave some margin
+            AutocompletePopup.HorizontalOffset = windowWidth - popupWidth - 10;
          }
       }
       private string GetCurrentWord(TextPointer position)
@@ -188,31 +180,25 @@ namespace ValveSpriteSheetUtil
             }
             else
             {
-               // Exit loop when encountering whitespace or start of document
                break;
             }
          }
 
-         // Adjust startOfRemoval to be the position immediately after the whitespace or at the start of the line
          if (startOfRemoval != null)
          {
             startOfRemoval = startOfRemoval.GetPositionAtOffset(0, LogicalDirection.Forward);
          }
 
-         // Define the end of the text to replace
          TextPointer endOfRemoval = caretPosition;
 
-         // Create a TextRange for the text to replace
          if (startOfRemoval != null && endOfRemoval != null)
          {
             TextRange textRange = new TextRange(startOfRemoval, endOfRemoval);
             textRange.Text = selectedItem;
          }
 
-         // Close the autocomplete popup
          AutocompletePopup.IsOpen = false;
 
-         // Move the caret to the end of the inserted text
          var newCaretPosition = startOfRemoval.GetPositionAtOffset(selectedItem.Length, LogicalDirection.Forward);
          InputTextBox.CaretPosition = newCaretPosition ?? InputTextBox.CaretPosition;
       }

@@ -10,6 +10,8 @@ namespace ValveSpriteSheetUtil
 
       public MainWindow()
       {
+         Thread.Sleep(100);
+         Console.Title = "Debug Console";
          InitializeComponent();
          InitializeSpriteSheetManager();
       }
@@ -135,9 +137,8 @@ namespace ValveSpriteSheetUtil
 
          if (vtexConfigWindow.ShowDialog() == true)
          {
-            // If "Done" was clicked, update the app settings with the new VTEXConfig
             appSettings.VTEXConfig = vtexConfigWindow.GetTextBoxContent();
-            appSettings.Save(); // Save the updated settings
+            appSettings.Save(); 
          }
       }
    }

@@ -2,7 +2,7 @@
    x:Class="ValveSpriteSheetUtil.MainWindow"
    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-   Title="Animated Sprite Utility WPF"
+   Title="Animated Sprite Utility"
    Width="678"
    Height="252"
    ResizeMode="NoResize"

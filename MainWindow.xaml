@@ -1,0 +1,394 @@
+﻿<Window
+   x:Class="ValveSpriteSheetUtil.MainWindow"
+   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+   Title="Animated Sprite Utility WPF"
+   Width="678"
+   Height="252"
+   ResizeMode="NoResize"
+   WindowStartupLocation="CenterScreen">
+   <Window.Background>
+      <SolidColorBrush Color="{DynamicResource BG.Dark}" />
+   </Window.Background>
+   <Grid Margin="5,5,5,5">
+      <Grid.ColumnDefinitions>
+         <ColumnDefinition Width="181*" />
+         <ColumnDefinition Width="477*" />
+      </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+         <RowDefinition Height="10*" />
+         <RowDefinition Height="10*" />
+         <RowDefinition Height="10*" />
+         <RowDefinition Height="10*" />
+         <RowDefinition Height="10*" />
+         <RowDefinition Height="10*" />
+         <RowDefinition Height="10*" />
+      </Grid.RowDefinitions>
+
+      <!--  Team Fortress 2 folder  -->
+      <Label VerticalAlignment="Center" Content="Team Fortress 2 folder:">
+         <Label.Foreground>
+            <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+         </Label.Foreground>
+      </Label>
+      <TextBox
+         x:Name="tf2FolderTextBox"
+         Grid.Column="1"
+         Height="18"
+         Margin="0,0,40,0"
+         VerticalAlignment="Center"
+         Style="{DynamicResource GeneralTextBoxStyle}"
+         TextChanged="Tf2FolderTextBox_TextChanged">
+         <TextBox.SelectionBrush>
+            <SolidColorBrush Color="{DynamicResource Secondary.Dark}" />
+         </TextBox.SelectionBrush>
+         <TextBox.Foreground>
+            <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+         </TextBox.Foreground>
+         <TextBox.BorderBrush>
+            <SolidColorBrush Color="{DynamicResource BG.Lighter}" />
+         </TextBox.BorderBrush>
+         <TextBox.Background>
+            <SolidColorBrush Color="{DynamicResource BG.Light}" />
+         </TextBox.Background>
+      </TextBox>
+      <Button
+         Grid.Column="1"
+         Width="30"
+         Height="18"
+         Margin="0,0,5,0"
+         HorizontalAlignment="Right"
+         VerticalAlignment="Center"
+         Click="SelectTf2Folder_Click"
+         Content="..."
+         Style="{DynamicResource GeneralButtonStyle}">
+         <Button.Background>
+            <SolidColorBrush Color="{DynamicResource BG.Light}" />
+         </Button.Background>
+         <Button.BorderBrush>
+            <SolidColorBrush Color="{DynamicResource BG.Lighter}" />
+         </Button.BorderBrush>
+         <Button.Foreground>
+            <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+         </Button.Foreground>
+      </Button>
+
+      <!--  Folder containing TGA frames  -->
+      <Label Grid.Row="1" Content="Folder containing TGA frames:">
+         <Label.Foreground>
+            <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+         </Label.Foreground>
+      </Label>
+      <TextBox
+         x:Name="frameTextBox"
+         Grid.Row="1"
+         Grid.Column="1"
+         Height="18"
+         Margin="0,0,40,0"
+         VerticalAlignment="Center"
+         Style="{DynamicResource GeneralTextBoxStyle}"
+         TextChanged="FrameTextBox_TextChanged">
+         <TextBox.SelectionBrush>
+            <SolidColorBrush Color="{DynamicResource Secondary.Dark}" />
+         </TextBox.SelectionBrush>
+         <TextBox.Foreground>
+            <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+         </TextBox.Foreground>
+         <TextBox.BorderBrush>
+            <SolidColorBrush Color="{DynamicResource BG.Lighter}" />
+         </TextBox.BorderBrush>
+         <TextBox.Background>
+            <SolidColorBrush Color="{DynamicResource BG.Light}" />
+         </TextBox.Background>
+      </TextBox>
+      <Button
+         Grid.Row="1"
+         Grid.Column="1"
+         Width="30"
+         Height="18"
+         Margin="0,0,5,0"
+         HorizontalAlignment="Right"
+         VerticalAlignment="Center"
+         Click="SelectFrameFolder_Click"
+         Content="..."
+         Style="{DynamicResource GeneralButtonStyle}">
+         <Button.Foreground>
+            <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+         </Button.Foreground>
+         <Button.BorderBrush>
+            <SolidColorBrush Color="{DynamicResource BG.Lighter}" />
+         </Button.BorderBrush>
+         <Button.Background>
+            <SolidColorBrush Color="{DynamicResource BG.Light}" />
+         </Button.Background>
+      </Button>
+
+      <!--  Frame filename prefix  -->
+      <Label Grid.Row="2" Content="Frame filename prefix:">
+         <Label.Foreground>
+            <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+         </Label.Foreground>
+      </Label>
+      <TextBox
+         x:Name="prefixTextBox"
+         Grid.Row="2"
+         Grid.Column="1"
+         Margin="0,0,166,0"
+         VerticalAlignment="Center"
+         Style="{DynamicResource GeneralTextBoxStyle}"
+         TextChanged="PrefixTextBox_TextChanged">
+         <TextBox.SelectionBrush>
+            <SolidColorBrush Color="{DynamicResource Secondary.Dark}" />
+         </TextBox.SelectionBrush>
+         <TextBox.Foreground>
+            <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+         </TextBox.Foreground>
+         <TextBox.Background>
+            <SolidColorBrush Color="{DynamicResource BG.Light}" />
+         </TextBox.Background>
+         <TextBox.BorderBrush>
+            <SolidColorBrush Color="{DynamicResource BG.Lighter}" />
+         </TextBox.BorderBrush>
+      </TextBox>
+
+      <!--  Desired sprite name  -->
+      <Label Grid.Row="3" Content="Desired sprite name:">
+         <Label.Foreground>
+            <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+         </Label.Foreground>
+      </Label>
+      <TextBox
+         x:Name="vtfNameTextBox"
+         Grid.Row="3"
+         Grid.Column="1"
+         Margin="0,0,260,0"
+         VerticalAlignment="Center"
+         Style="{DynamicResource GeneralTextBoxStyle}"
+         TextChanged="NameTextBox_TextChanged">
+         <TextBox.SelectionBrush>
+            <SolidColorBrush Color="{DynamicResource Secondary.Dark}" />
+         </TextBox.SelectionBrush>
+         <TextBox.BorderBrush>
+            <SolidColorBrush Color="{DynamicResource BG.Lighter}" />
+         </TextBox.BorderBrush>
+         <TextBox.Background>
+            <SolidColorBrush Color="{DynamicResource BG.Light}" />
+         </TextBox.Background>
+         <TextBox.Foreground>
+            <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+         </TextBox.Foreground>
+      </TextBox>
+
+      <!--  Generate MKS file  -->
+      <Button
+         Grid.Row="4"
+         Grid.ColumnSpan="2"
+         Margin="5,0,5,0"
+         VerticalAlignment="Center"
+         Click="CreateMKSFile_Click"
+         Content="Generate MKS file"
+         Style="{DynamicResource GeneralButtonStyle}">
+         <Button.Foreground>
+            <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+         </Button.Foreground>
+         <Button.BorderBrush>
+            <SolidColorBrush Color="{DynamicResource BG.Lighter}" />
+         </Button.BorderBrush>
+         <Button.Background>
+            <SolidColorBrush Color="{DynamicResource BG.Light}" />
+         </Button.Background>
+      </Button>
+
+      <!--  Loop Animation  -->
+      <CheckBox
+         x:Name="loopCheckBox"
+         Grid.Row="3"
+         Grid.Column="1"
+         Margin="0,0,12,0"
+         HorizontalAlignment="Right"
+         VerticalAlignment="Center"
+         Content=" Loop Animation"
+         Style="{DynamicResource GeneralCheckBoxStyle}">
+         <CheckBox.Foreground>
+            <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+         </CheckBox.Foreground>
+      </CheckBox>
+
+      <!--  Create VTF  -->
+      <Button
+         x:Name="CreateVTFButton"
+         Grid.Row="5"
+         Grid.ColumnSpan="2"
+         Width="470"
+         Margin="0,5,0,0"
+         HorizontalAlignment="Left"
+         VerticalAlignment="Top"
+         Click="CreateVTFFile_Click"
+         Content="Create VTF"
+         IsEnabled="False"
+         Style="{DynamicResource GeneralButtonStyle}">
+         <Button.BorderBrush>
+            <SolidColorBrush Color="{DynamicResource BG.Lighter}" />
+         </Button.BorderBrush>
+         <Button.Background>
+            <SolidColorBrush Color="{DynamicResource BG.Light}" />
+         </Button.Background>
+         <Button.Foreground>
+            <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+         </Button.Foreground>
+      </Button>
+
+      <!--  VTEX Config  -->
+      <Button
+         Grid.Row="5"
+         Grid.Column="1"
+         Width="161"
+         Margin="0,0,5,0"
+         HorizontalAlignment="Right"
+         VerticalAlignment="Center"
+         Click="OpenVtexConfig_Click"
+         Content="VTEX Config"
+         Style="{DynamicResource GeneralButtonStyle}">
+         <Button.Foreground>
+            <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+         </Button.Foreground>
+         <Button.BorderBrush>
+            <SolidColorBrush Color="{DynamicResource BG.Lighter}" />
+         </Button.BorderBrush>
+         <Button.Background>
+            <SolidColorBrush Color="{DynamicResource BG.Light}" />
+         </Button.Background>
+      </Button>
+
+      <!--  Batch convert PNG to TGA  -->
+      <Button
+         Grid.Row="2"
+         Grid.Column="1"
+         Width="156"
+         Margin="0,0,5,0"
+         HorizontalAlignment="Right"
+         VerticalAlignment="Center"
+         Click="ConvertPNG_Click"
+         Content="Batch convert PNG to TGA"
+         Style="{DynamicResource GeneralButtonStyle}">
+         <Button.Foreground>
+            <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+         </Button.Foreground>
+         <Button.BorderBrush>
+            <SolidColorBrush Color="{DynamicResource BG.Lighter}" />
+         </Button.BorderBrush>
+         <Button.Background>
+            <SolidColorBrush Color="{DynamicResource BG.Light}" />
+         </Button.Background>
+      </Button>
+
+      <!--  Status Label  -->
+      <Label
+         x:Name="statusLabel"
+         Grid.Row="6"
+         Margin="0,16,0,0"
+         HorizontalAlignment="Left"
+         VerticalAlignment="Top" />
+
+      <!--  Blend Frames  -->
+      <CheckBox
+         x:Name="blendFramesCheckBox"
+         Grid.Row="6"
+         Margin="8,0,0,0"
+         HorizontalAlignment="Left"
+         VerticalAlignment="Center"
+         Content=" Blend Frames"
+         Style="{DynamicResource GeneralCheckBoxStyle}">
+         <CheckBox.BorderBrush>
+            <SolidColorBrush Color="{DynamicResource BG.Lighter}" />
+         </CheckBox.BorderBrush>
+         <CheckBox.Background>
+            <SolidColorBrush Color="{DynamicResource BG.Light}" />
+         </CheckBox.Background>
+         <CheckBox.Foreground>
+            <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+         </CheckBox.Foreground>
+      </CheckBox>
+
+      <!--  Depthblend  -->
+      <CheckBox
+         x:Name="depthBlendCheckBox"
+         Grid.Row="6"
+         Grid.ColumnSpan="2"
+         Margin="115,0,0,0"
+         HorizontalAlignment="Left"
+         VerticalAlignment="Center"
+         Content=" Depthblend"
+         IsChecked="True"
+         Style="{DynamicResource GeneralCheckBoxStyle}">
+         <CheckBox.BorderBrush>
+            <SolidColorBrush Color="{DynamicResource BG.Lighter}" />
+         </CheckBox.BorderBrush>
+         <CheckBox.Background>
+            <SolidColorBrush Color="{DynamicResource BG.Light}" />
+         </CheckBox.Background>
+         <CheckBox.Foreground>
+            <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+         </CheckBox.Foreground>
+      </CheckBox>
+
+      <!--  Additive  -->
+      <CheckBox
+         x:Name="additiveCheckBox"
+         Grid.Row="6"
+         Grid.Column="1"
+         Margin="23,0,0,0"
+         HorizontalAlignment="Left"
+         VerticalAlignment="Center"
+         Content=" Additive"
+         Style="{DynamicResource GeneralCheckBoxStyle}">
+         <CheckBox.BorderBrush>
+            <SolidColorBrush Color="{DynamicResource BG.Lighter}" />
+         </CheckBox.BorderBrush>
+         <CheckBox.Background>
+            <SolidColorBrush Color="{DynamicResource BG.Light}" />
+         </CheckBox.Background>
+         <CheckBox.Foreground>
+            <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+         </CheckBox.Foreground>
+      </CheckBox>
+
+      <!--  Generate VMT  -->
+      <Button
+         Grid.Row="6"
+         Grid.Column="1"
+         Width="364"
+         Margin="0,0,5,0"
+         HorizontalAlignment="Right"
+         VerticalAlignment="Center"
+         Click="CreateVMTFile_Click"
+         Content="Generate VMT"
+         Style="{DynamicResource GeneralButtonStyle}">
+         <Button.BorderBrush>
+            <SolidColorBrush Color="{DynamicResource BG.Lighter}" />
+         </Button.BorderBrush>
+         <Button.Background>
+            <SolidColorBrush Color="{DynamicResource BG.Light}" />
+         </Button.Background>
+         <Button.Foreground>
+            <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+         </Button.Foreground>
+      </Button>
+
+      <!--  Multiple Sequences  -->
+      <CheckBox
+         x:Name="splitCheckBox"
+         Grid.Row="3"
+         Grid.Column="1"
+         Margin="0,0,129,0"
+         HorizontalAlignment="Right"
+         VerticalAlignment="Center"
+         Content=" Multiple Sequences"
+         Style="{DynamicResource GeneralCheckBoxStyle}">
+         <CheckBox.Foreground>
+            <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+         </CheckBox.Foreground>
+      </CheckBox>
+
+   </Grid>
+</Window>

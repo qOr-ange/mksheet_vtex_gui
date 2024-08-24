@@ -32,13 +32,13 @@ namespace ValveSpriteSheetUtil
          InitializeComponent();
          Loaded += OnWindowLoaded;
          AutocompletePopup.IsOpen = false;
+         
       }
 
       private void OnCancelClick(object sender, RoutedEventArgs e)
       {
          Close();
       }
-
       private void OnSaveClick(object sender, RoutedEventArgs e)
       {
          string userInput = GetTextBoxContent();
@@ -55,6 +55,7 @@ namespace ValveSpriteSheetUtil
             MessageBox.Show($"Invalid input: {errorMessage}", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Error);
          }
       }
+
 
       private void OnWindowLoaded(object sender, RoutedEventArgs e)
       {
@@ -74,12 +75,9 @@ namespace ValveSpriteSheetUtil
          return textRange.Text;
       }
 
-
-
       private void OnRichTextBoxTextChanged(object sender, TextChangedEventArgs e)
       {
          UpdateAutocomplete();
-         HighlightInvalidParameters();
       }
       private void UpdateAutocomplete()
       {
@@ -118,7 +116,7 @@ namespace ValveSpriteSheetUtil
          var transform = InputTextBox.TransformToAncestor(this);
          var popupTopLeft = transform.Transform(new Point(rect.X, rect.Y + rect.Height));
 
-         const double verticalOffsetAdjustment = 20;
+         const double verticalOffsetAdjustment = 30;
          AutocompletePopup.HorizontalOffset = popupTopLeft.X;
          AutocompletePopup.VerticalOffset = popupTopLeft.Y - verticalOffsetAdjustment;
 
@@ -202,58 +200,6 @@ namespace ValveSpriteSheetUtil
          var newCaretPosition = startOfRemoval.GetPositionAtOffset(selectedItem.Length, LogicalDirection.Forward);
          InputTextBox.CaretPosition = newCaretPosition ?? InputTextBox.CaretPosition;
       }
-
-
-
-
-
-
-
-      private void HighlightInvalidParameters()
-      {
-         var document = InputTextBox.Document;
-         var textRange = new TextRange(document.ContentStart, document.ContentEnd);
-
-         var lines = textRange.Text.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-
-         foreach (var line in lines)
-         {
-            var parts = line.Split(new[] { ' ' }, 2, StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length == 0) continue;
-
-            string parameter = parts[0].ToLowerInvariant();
-            bool isValidParameter = ValidParams.Contains(parameter);
-
-            if (!isValidParameter)
-            {
-               HighlightText(line, Brushes.Red);
-            }
-            else
-            {
-               HighlightText(line, (Brush)Application.Current.Resources["Brush.Text.Secondary"]);
-            }
-         }
-      }
-
-      private void HighlightText(string text, Brush color)
-      {
-         var document = InputTextBox.Document;
-         var start = document.ContentStart;
-         var end = document.ContentEnd;
-
-         while (start != null && start.CompareTo(end) < 0)
-         {
-            if (start.GetTextInRun(LogicalDirection.Forward).Contains(text))
-            {
-               var textRange = new TextRange(start, start.GetPositionAtOffset(text.Length, LogicalDirection.Forward));
-               textRange.ApplyPropertyValue(TextElement.ForegroundProperty, color);
-            }
-
-            start = start.GetNextContextPosition(LogicalDirection.Forward);
-         }
-      }
-
-
 
       private (bool isValid, string errorMessage) ParseAndValidate(string input)
       {

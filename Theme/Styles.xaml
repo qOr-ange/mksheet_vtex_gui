@@ -377,4 +377,61 @@
       </Setter>
    </Style>
 
+   <!--  Style for the Popup  -->
+   <Style x:Key="AutocompletePopupStyle" TargetType="Popup">
+      <Setter Property="Width" Value="200" />
+      <Setter Property="Height" Value="150" />
+      <Setter Property="Placement" Value="Relative" />
+      <Setter Property="PlacementTarget" Value="{Binding ElementName=InputTextBox}" />
+      <Setter Property="StaysOpen" Value="False" />
+      <Setter Property="PopupAnimation" Value="Fade" />
+      <Setter Property="AllowsTransparency" Value="True" />
+      <Setter Property="IsHitTestVisible" Value="True" />
+      <Setter Property="OverridesDefaultStyle" Value="True" />
+
+   </Style>
+
+   <!--  Style for the ListBox within the Popup  -->
+   <Style x:Key="AutocompleteListBoxStyle" TargetType="ListBox">
+      <Setter Property="Background" Value="{DynamicResource Brush.BG.Dark}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource Brush.BG.Lighter}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="Padding" Value="2" />
+      <Setter Property="FontSize" Value="14" />
+      <Setter Property="Height" Value="Auto" />
+      <Setter Property="ItemTemplate">
+         <Setter.Value>
+            <DataTemplate>
+               <TextBlock Padding="5" Text="{Binding}" />
+            </DataTemplate>
+         </Setter.Value>
+      </Setter>
+   </Style>
+
+   <!--  Style for ListBox Items  -->
+   <Style TargetType="ListBoxItem">
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="Margin" Value="0" />
+      <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+      <Style.Triggers>
+         <Trigger Property="IsEnabled" Value="True">
+            <Setter Property="Background" Value="{DynamicResource Brush.BG.Dark}" />
+            <Setter Property="Foreground" Value="{DynamicResource Brush.Text.Secondary}" />
+         </Trigger>
+         <Trigger Property="IsMouseOver" Value="True">
+            <Setter Property="Background" Value="{DynamicResource Brush.BG.Dark}" />
+            <Setter Property="Foreground" Value="{DynamicResource Brush.Text.Secondary}" />
+         </Trigger>
+         <Trigger Property="IsSelected" Value="True">
+            <Setter Property="Background" Value="{DynamicResource Brush.Button.Active}" />
+            <Setter Property="Foreground" Value="{DynamicResource Brush.BG.Dark}" />
+         </Trigger>
+      </Style.Triggers>
+   </Style>
+
 </ResourceDictionary>

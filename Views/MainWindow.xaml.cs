@@ -94,7 +94,7 @@ namespace ValveSpriteSheetUtil
       private void CreateVTFFile_Click(object sender, RoutedEventArgs e)
       {
          spriteSheetManager.SetFileName(vtfNameTextBox.Text);
-         string result = spriteSheetManager.CreateVTFFile();
+         string result = spriteSheetManager.CreateVTFFile(appSettings.VTEXConfig);
          Console.WriteLine(result);
       }
       private void ConvertPNG_Click(object sender, RoutedEventArgs e)

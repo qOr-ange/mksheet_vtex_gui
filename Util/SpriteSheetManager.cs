@@ -110,7 +110,7 @@ namespace ValveSpriteSheetUtil
 
          return $"Done! {fileName}.mks created. Make any changes now.";
       }
-      public string CreateVTFFile()
+      public string CreateVTFFile(string vtexParams)
       {
          if (frames == null || frames.Count == 0 || string.IsNullOrEmpty(mksFile))
             return "MKS file or frames are not properly initialized.";
@@ -171,15 +171,19 @@ namespace ValveSpriteSheetUtil
             File.Move(tf2Bin +"\\"+ fileName + ".sht", tf2Folder + "\\tf\\materialsrc\\" + fileName + ".sht");
             File.Move(tf2Bin +"\\"+ fileName + ".tga", tf2Folder + "\\tf\\materialsrc\\" + fileName + ".tga");
             
-            return CreateVTFFromSHT(tf2Bin);
+            return CreateVTFFromSHT(tf2Bin, vtexParams);
          }
          catch (Exception ex)
          {
             return ex.Message;
          }
       }
-      private string CreateVTFFromSHT(string tf2Bin)
+      private string CreateVTFFromSHT(string tf2Bin, string vtexParams)
       {
+         if (vtexParams.Length > 0)
+         {
+            File.WriteAllText(tf2Folder + "\\tf\\materialsrc\\" + fileName + ".txt", vtexParams, new UTF8Encoding(false));
+         }
          var processInfo = new ProcessStartInfo("cmd.exe")
          {
             WorkingDirectory = Environment.GetEnvironmentVariable("SYSTEMROOT"),
@@ -193,6 +197,10 @@ namespace ValveSpriteSheetUtil
          // Clean up files
          File.Delete(Path.Combine(tf2Folder, "tf", "materialsrc", $"{fileName}.sht"));
          File.Delete(Path.Combine(tf2Folder, "tf", "materialsrc", $"{fileName}.tga"));
+         if (vtexParams.Length > 0)
+         {
+            File.Delete(tf2Folder + "\\tf\\materialsrc\\" + fileName + ".txt");
+         }
 
          string vtfLocation = Path.Combine(frameFolder, $"{fileName}.vtf");
          if (File.Exists(vtfLocation))

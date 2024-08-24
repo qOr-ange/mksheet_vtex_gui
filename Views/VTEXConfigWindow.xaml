@@ -32,6 +32,8 @@
          Grid.Row="1"
          Margin="0,0,0,3"
          AcceptsReturn="True"
+         AcceptsTab="False"
+         Block.LineHeight="2"
          TextChanged="OnRichTextBoxTextChanged"
          VerticalScrollBarVisibility="Auto">
          <RichTextBox.Background>
@@ -89,12 +91,14 @@
 
       <Popup
          Name="AutocompletePopup"
-         Width="200"
-         Height="150"
-         Placement="Relative"
-         PlacementTarget="{Binding ElementName=InputTextBox}"
-         StaysOpen="False">
-         <ListBox Name="AutocompleteListBox" SelectionChanged="OnAutocompleteSelectionChanged" />
+         Width="Auto"
+         Height="Auto"
+         Style="{DynamicResource AutocompletePopupStyle}">
+         <ListBox
+            Name="AutocompleteListBox"
+            SelectionChanged="OnAutocompleteSelectionChanged"
+            Style="{StaticResource AutocompleteListBoxStyle}" />
       </Popup>
+
    </Grid>
 </Window>

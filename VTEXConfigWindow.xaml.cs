@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -72,24 +73,30 @@ namespace ValveSpriteSheetUtil
          var textRange = new TextRange(InputTextBox.Document.ContentStart, InputTextBox.Document.ContentEnd);
          return textRange.Text;
       }
+
+
+
       private void OnRichTextBoxTextChanged(object sender, TextChangedEventArgs e)
       {
          UpdateAutocomplete();
-         
          HighlightInvalidParameters();
       }
-
-
       private void UpdateAutocomplete()
       {
          var caretPosition = InputTextBox.CaretPosition;
          if (caretPosition != null)
          {
+            // Get the entire word at the caret position
             var currentWord = GetCurrentWord(caretPosition);
-
+            // Check if the current word is not empty
             if (!string.IsNullOrEmpty(currentWord))
             {
-               var suggestions = ValidParams.Where(p => p.StartsWith(currentWord, StringComparison.OrdinalIgnoreCase)).ToList();
+               // Filter suggestions based on the current word
+               var suggestions = ValidParams
+                   .Where(p => p.StartsWith(currentWord, StringComparison.OrdinalIgnoreCase))
+                   .ToList();
+
+               // Update the autocomplete list and popup
                if (suggestions.Any())
                {
                   AutocompleteListBox.ItemsSource = suggestions;
@@ -131,20 +138,91 @@ namespace ValveSpriteSheetUtil
             AutocompletePopup.HorizontalOffset = windowWidth - popupWidth - 10; // Leave some margin
          }
       }
-
-
-
-
-
       private string GetCurrentWord(TextPointer position)
       {
-         var start = position.GetPositionAtOffset(-1, LogicalDirection.Backward);
-         var end = position.GetPositionAtOffset(1, LogicalDirection.Forward);
-         if (start == null || end == null) return string.Empty;
+         if (position == null)
+            return string.Empty;
 
-         var range = new TextRange(start, end);
-         return range.Text.Trim();
+         string word = string.Empty;
+
+         TextPointer start = position.GetPositionAtOffset(0, LogicalDirection.Backward);
+         while (start != null)
+         {
+            string text = start.GetTextInRun(LogicalDirection.Backward);
+
+            if (string.IsNullOrEmpty(text) || char.IsWhiteSpace(text[0]))
+            {
+               break;
+            }
+
+            word = text.Substring(0, text.Length - 1);
+            start = start.GetPositionAtOffset(-1, LogicalDirection.Backward);
+         }
+
+         string currentText = position.GetTextInRun(LogicalDirection.Backward);
+         if (!string.IsNullOrEmpty(currentText))
+         {
+            word = currentText.Substring(0, currentText.Length);
+         }
+
+         return word.Trim();
       }
+      private void OnAutocompleteSelectionChanged(object sender, SelectionChangedEventArgs e)
+      {
+         var selectedItem = AutocompleteListBox.SelectedItem as string;
+         if (selectedItem == null)
+            return;
+
+         var caretPosition = InputTextBox.CaretPosition;
+         if (caretPosition == null)
+            return;
+
+         TextPointer startOfRemoval = caretPosition.GetPositionAtOffset(0, LogicalDirection.Backward);
+         while (startOfRemoval != null)
+         {
+            string textInRun = startOfRemoval.GetTextInRun(LogicalDirection.Backward);
+
+            if (!string.IsNullOrEmpty(textInRun) && !char.IsWhiteSpace(textInRun[0]))
+            {
+               startOfRemoval = startOfRemoval.GetPositionAtOffset(-1, LogicalDirection.Backward);
+            }
+            else
+            {
+               // Exit loop when encountering whitespace or start of document
+               break;
+            }
+         }
+
+         // Adjust startOfRemoval to be the position immediately after the whitespace or at the start of the line
+         if (startOfRemoval != null)
+         {
+            startOfRemoval = startOfRemoval.GetPositionAtOffset(0, LogicalDirection.Forward);
+         }
+
+         // Define the end of the text to replace
+         TextPointer endOfRemoval = caretPosition;
+
+         // Create a TextRange for the text to replace
+         if (startOfRemoval != null && endOfRemoval != null)
+         {
+            TextRange textRange = new TextRange(startOfRemoval, endOfRemoval);
+            textRange.Text = selectedItem;
+         }
+
+         // Close the autocomplete popup
+         AutocompletePopup.IsOpen = false;
+
+         // Move the caret to the end of the inserted text
+         var newCaretPosition = startOfRemoval.GetPositionAtOffset(selectedItem.Length, LogicalDirection.Forward);
+         InputTextBox.CaretPosition = newCaretPosition ?? InputTextBox.CaretPosition;
+      }
+
+
+
+
+
+
+
       private void HighlightInvalidParameters()
       {
          var document = InputTextBox.Document;
@@ -166,10 +244,11 @@ namespace ValveSpriteSheetUtil
             }
             else
             {
-               HighlightText(line, Brushes.Black);
+               HighlightText(line, (Brush)Application.Current.Resources["Brush.Text.Secondary"]);
             }
          }
       }
+
       private void HighlightText(string text, Brush color)
       {
          var document = InputTextBox.Document;
@@ -187,41 +266,7 @@ namespace ValveSpriteSheetUtil
             start = start.GetNextContextPosition(LogicalDirection.Forward);
          }
       }
-      private void OnAutocompleteSelectionChanged(object sender, SelectionChangedEventArgs e)
-      {
-         var selectedItem = AutocompleteListBox.SelectedItem as string;
-         if (selectedItem != null)
-         {
-            var caretPosition = InputTextBox.CaretPosition;
-            if (caretPosition != null)
-            {
-               // Move back to the start of the current word
-               var startOfWord = caretPosition.GetPositionAtOffset(-1, LogicalDirection.Backward);
-               while (startOfWord != null && startOfWord.GetTextInRun(LogicalDirection.Backward).Length > 0 && !char.IsWhiteSpace(startOfWord.GetTextInRun(LogicalDirection.Backward)[0]))
-               {
-                  startOfWord = startOfWord.GetPositionAtOffset(-1, LogicalDirection.Backward);
-               }
 
-               // Move forward to the end of the current word
-               var endOfWord = caretPosition.GetPositionAtOffset(1, LogicalDirection.Forward);
-               while (endOfWord != null && !char.IsWhiteSpace(endOfWord.GetTextInRun(LogicalDirection.Forward)[0]))
-               {
-                  endOfWord = endOfWord.GetPositionAtOffset(1, LogicalDirection.Forward);
-               }
-
-               // Replace the current word with the selected item
-               if (startOfWord != null && endOfWord != null)
-               {
-                  var textRange = new TextRange(startOfWord, endOfWord);
-                  textRange.Text = selectedItem;
-               }
-
-               AutocompletePopup.IsOpen = false;
-               // Move the caret to the end of the inserted text
-               InputTextBox.CaretPosition = InputTextBox.CaretPosition.GetPositionAtOffset(selectedItem.Length, LogicalDirection.Forward);
-            }
-         }
-      }
 
 
       private (bool isValid, string errorMessage) ParseAndValidate(string input)

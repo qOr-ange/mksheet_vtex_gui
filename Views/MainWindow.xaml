@@ -6,7 +6,7 @@
    Width="678"
    Height="252"
    ResizeMode="NoResize"
-   WindowStartupLocation="CenterScreen" Icon="/Views/icon.ico">
+   WindowStartupLocation="CenterScreen" Icon="/icon.ico">
    <Window.Background>
       <SolidColorBrush Color="{DynamicResource BG.Dark}" />
    </Window.Background>

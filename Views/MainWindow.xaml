@@ -6,7 +6,7 @@
    Width="678"
    Height="252"
    ResizeMode="NoResize"
-   WindowStartupLocation="CenterScreen">
+   WindowStartupLocation="CenterScreen" Icon="/Views/icon.ico">
    <Window.Background>
       <SolidColorBrush Color="{DynamicResource BG.Dark}" />
    </Window.Background>
@@ -209,6 +209,12 @@
          VerticalAlignment="Center"
          Content=" Loop Animation"
          Style="{DynamicResource GeneralCheckBoxStyle}">
+         <CheckBox.Background>
+            <SolidColorBrush Color="{DynamicResource BG.Light}" />
+         </CheckBox.Background>
+         <CheckBox.BorderBrush>
+            <SolidColorBrush Color="{DynamicResource BG.Lighter}" />
+         </CheckBox.BorderBrush>
          <CheckBox.Foreground>
             <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
          </CheckBox.Foreground>
@@ -219,10 +225,10 @@
          x:Name="CreateVTFButton"
          Grid.Row="5"
          Grid.ColumnSpan="2"
-         Width="470"
-         Margin="0,5,0,0"
+         Width="454"
+         Margin="5,0,0,0"
          HorizontalAlignment="Left"
-         VerticalAlignment="Top"
+         VerticalAlignment="Center"
          Click="CreateVTFFile_Click"
          Content="Create VTF"
          IsEnabled="False"
@@ -241,8 +247,9 @@
       <!--  VTEX Config  -->
       <Button
          Grid.Row="5"
-         Grid.Column="1"
-         Width="161"
+         Grid.Column="0"
+         Grid.ColumnSpan="2"
+         Width="179"
          Margin="0,0,5,0"
          HorizontalAlignment="Right"
          VerticalAlignment="Center"
@@ -368,10 +375,10 @@
             <SolidColorBrush Color="{DynamicResource BG.Lighter}" />
          </Button.BorderBrush>
          <Button.Background>
-            <SolidColorBrush Color="{DynamicResource BG.Light}" />
+            <SolidColorBrush Color="#FF1F1F29" />
          </Button.Background>
          <Button.Foreground>
-            <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+            <SolidColorBrush Color="#FFC4A7E9" />
          </Button.Foreground>
       </Button>
 
@@ -385,6 +392,12 @@
          VerticalAlignment="Center"
          Content=" Multiple Sequences"
          Style="{DynamicResource GeneralCheckBoxStyle}">
+         <CheckBox.BorderBrush>
+            <SolidColorBrush Color="{DynamicResource BG.Lighter}" />
+         </CheckBox.BorderBrush>
+         <CheckBox.Background>
+            <SolidColorBrush Color="{DynamicResource BG.Light}" />
+         </CheckBox.Background>
          <CheckBox.Foreground>
             <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
          </CheckBox.Foreground>

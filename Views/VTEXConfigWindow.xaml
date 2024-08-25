@@ -162,6 +162,15 @@
             </StackPanel>
          </ComboBoxItem>
       </ComboBox>
+      <Label
+         Height="26"
+         HorizontalAlignment="Right"
+         VerticalAlignment="Center"
+         Content="Templates:" Margin="0,-4,35,0">
+         <Label.Foreground>
+            <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+         </Label.Foreground>
+      </Label>
 
    </Grid>
 </Window>

@@ -13,17 +13,64 @@ namespace ValveSpriteSheetUtil
    public partial class VTEXConfigWindow : Window
    {
       private string _vtexConfig;
-      private static readonly HashSet<string> ValidParams = new HashSet<string>
+      private static readonly Dictionary<string, (string defaultValue, Func<string, bool> validate)> ValidParamsDict = new()
       {
-          "allmips", "alphatest", "alphatest_hifreq_threshhold", "alphatest_threshhold", "alphatodistance",
-          "anisotropic", "bumpscale", "clamps", "clampt", "clampu", "distancespread", "dudv", "dxt5",
-          "invertgreen", "manualmip", "maxheight", "maxheight_360", "maxwidth", "maxwidth_360", "mipblend",
-          "nocompress", "nodebug", "nolod", "nomip", "nonice", "normal", "normalalphatodudvluminance",
-          "normaltodudv", "numchannels", "oneovermiplevelinalpha", "pfm", "pfmscale", "pointsample",
-          "premultcolorbyoneovermiplevel", "procedural", "reduce", "reducex", "reducey", "rendertarget",
-          "singlecopy", "skybox", "specvar", "spheremap_negz", "spheremap_z", "spheremap_negy", "spheremap_y",
-          "spheremap_negx", "spheremap_x", "ssbump", "startframe", "endframe", "stripalphachannel",
-          "stripcolorchannel", "trilinear", "volumetexture"
+          { "allmips",                       (null, ValidateBooleanFlag) },
+          { "alphatest",                     ( null, ValidateBooleanFlag) },
+          { "alphatest_hifreq_threshhold",   (null, ValidateAlphaThreshold) },
+          { "alphatest_threshhold",          (null, ValidateAlphaThreshold) },
+          { "alphatodistance",               (null, ValidateBooleanFlag) },
+          { "anisotropic",                   (null, ValidateBooleanFlag) },
+          { "bumpscale",                     (null, ValidateNonNegativeFloat) },
+          { "clamps",                        (null, ValidateBooleanFlag) },
+          { "clampt",                        (null, ValidateBooleanFlag) },
+          { "clampu",                        (null, ValidateBooleanFlag) },
+          { "distancespread",                (null, ValidateAlphaThreshold) },
+          { "dudv",                          (null, ValidateBooleanFlag) },
+          { "dxt5",                          ("1", ValidateBooleanFlag) },
+          { "invertgreen",                   (null, ValidateBooleanFlag) },
+          { "manualmip",                     (null, ValidateBooleanFlag) },
+          { "maxheight",                     ("1024", ValidatePositiveInteger) },
+          { "maxheight_360",                 ("1024", ValidatePositiveInteger) },
+          { "maxwidth",                      ("1024", ValidatePositiveInteger) },
+          { "maxwidth_360",                  ("1024", ValidatePositiveInteger) },
+          { "mipblend",                      (null, ValidateMipBlend) },
+          { "nocompress",                    (null, ValidateBooleanFlag) },
+          { "nodebug",                       (null, ValidateBooleanFlag) },
+          { "nolod",                         ("1", ValidateBooleanFlag) },
+          { "nomip",                         ("1", ValidateBooleanFlag) },
+          { "nonice",                        ("1", ValidateBooleanFlag) },
+          { "normal",                        (null, ValidateBooleanFlag) },
+          { "normalalphatodudvluminance",    (null, ValidateBooleanFlag) },
+          { "normaltodudv",                  (null, ValidateBooleanFlag) },
+          { "numchannels",                   ("4", ValidateNumChannels) },
+          { "oneovermiplevelinalpha",        (null, ValidateAlphaThreshold) },
+          { "pfm",                           (null, ValidateBooleanFlag) },
+          { "pfmscale",                      ("1.0", ValidateNonNegativeFloat) },
+          { "pointsample",                   (null, ValidateBooleanFlag) },
+          { "premultcolorbyoneovermiplevel", (null, ValidateAlphaThreshold) },
+          { "procedural",                    (null, ValidateBooleanFlag) },
+          { "reduce",                        ("2", ValidatePowerOfTwo) },
+          { "reducex",                       ("2", ValidatePowerOfTwo) },
+          { "reducey",                       ("2", ValidatePowerOfTwo) },
+          { "rendertarget",                  (null, ValidateBooleanFlag) },
+          { "singlecopy",                    (null, ValidateBooleanFlag) },
+          { "skybox",                        (null, ValidateBooleanFlag) },
+          { "specvar",                       (null, ValidateBooleanFlag) },
+          { "spheremap_negz",                (null, ValidateBooleanFlag) },
+          { "spheremap_z",                   (null, ValidateBooleanFlag) },
+          { "spheremap_negy",                (null, ValidateBooleanFlag) },
+          { "spheremap_y",                   (null, ValidateBooleanFlag) },
+          { "spheremap_negx",                (null, ValidateBooleanFlag) },
+          { "spheremap_x",                   (null, ValidateBooleanFlag) },
+          { "ssbump",                        (null, ValidateBooleanFlag) },
+          { "srgb",                          ("1", ValidateBooleanFlag) },
+          { "startframe",                    ("0", ValidateNonNegativeInteger) },
+          { "endframe",                      ("0", ValidateNonNegativeInteger) },
+          { "stripalphachannel",             (null, ValidateBooleanFlag) },
+          { "stripcolorchannel",             (null, ValidateBooleanFlag) },
+          { "trilinear",                     (null, ValidateBooleanFlag) },
+          { "volumetexture",                 (null, ValidateBooleanFlag) }
       };
 
       public VTEXConfigWindow(string vtexConfig)
@@ -32,7 +79,13 @@ namespace ValveSpriteSheetUtil
          InitializeComponent();
          Loaded += OnWindowLoaded;
          AutocompletePopup.IsOpen = false;
-         
+
+         // TODO: set up stuffs to save templates
+         TemplateComboBox.Items.Add("item 0");
+         TemplateComboBox.Items.Add("item 1");
+         TemplateComboBox.Items.Add("item 2");
+         TemplateComboBox.Items.Add("item 3");
+         TemplateComboBox.Items.Add("item 4");
       }
 
       private void OnCancelClick(object sender, RoutedEventArgs e)
@@ -56,47 +109,44 @@ namespace ValveSpriteSheetUtil
          }
       }
 
-
       private void OnWindowLoaded(object sender, RoutedEventArgs e)
       {
          LoadTextBoxContent();
       }
       private void LoadTextBoxContent()
       {
-         var document = new FlowDocument();
-         var paragraph = new Paragraph();
-         paragraph.Inlines.Add(new Run(_vtexConfig));
-         document.Blocks.Add(paragraph);
-         InputTextBox.Document = document;
+         InputTextBox.Text = _vtexConfig;
       }
       public string GetTextBoxContent()
       {
-         var textRange = new TextRange(InputTextBox.Document.ContentStart, InputTextBox.Document.ContentEnd);
-         return textRange.Text;
+         return InputTextBox.Text;
       }
 
-      private void OnRichTextBoxTextChanged(object sender, TextChangedEventArgs e)
+      private void OnTextBoxTextChanged(object sender, TextChangedEventArgs e)
       {
          UpdateAutocomplete();
       }
       private void UpdateAutocomplete()
       {
-         var caretPosition = InputTextBox.CaretPosition;
-         if (caretPosition != null)
+         int caretIndex = InputTextBox.CaretIndex;
+         if (caretIndex >= 0)
          {
-            var currentWord = GetCurrentWord(caretPosition);
+            var currentWord = GetCurrentLine();
+            if (currentWord != null) Console.WriteLine(currentWord);
+
+
             if (!string.IsNullOrEmpty(currentWord))
             {
-               var suggestions = ValidParams
-                   .Where(p => p.StartsWith(currentWord, StringComparison.OrdinalIgnoreCase))
-                   .ToList();
+               var suggestions = ValidParamsDict.Keys
+               .Where(key => key.StartsWith(currentWord, StringComparison.OrdinalIgnoreCase))
+               .ToList();
 
                if (suggestions.Any())
                {
                   AutocompleteListBox.ItemsSource = suggestions;
                   AutocompletePopup.IsOpen = true;
 
-                  PositionAutocompletePopup(caretPosition);
+                  PositionAutocompletePopup(caretIndex);
                }
                else
                {
@@ -109,12 +159,11 @@ namespace ValveSpriteSheetUtil
             }
          }
       }
-
-      private void PositionAutocompletePopup(TextPointer caretPosition)
+      private void PositionAutocompletePopup(int caretIndex)
       {
-         var rect = caretPosition.GetCharacterRect(LogicalDirection.Backward);
+         var caretRect = InputTextBox.GetRectFromCharacterIndex(caretIndex);
          var transform = InputTextBox.TransformToAncestor(this);
-         var popupTopLeft = transform.Transform(new Point(rect.X, rect.Y + rect.Height));
+         var popupTopLeft = transform.Transform(new Point(caretRect.Left, caretRect.Bottom));
 
          const double verticalOffsetAdjustment = 30;
          AutocompletePopup.HorizontalOffset = popupTopLeft.X;
@@ -128,34 +177,9 @@ namespace ValveSpriteSheetUtil
             AutocompletePopup.HorizontalOffset = windowWidth - popupWidth - 10;
          }
       }
-      private string GetCurrentWord(TextPointer position)
+      private string GetCurrentLine()
       {
-         if (position == null)
-            return string.Empty;
-
-         string word = string.Empty;
-
-         TextPointer start = position.GetPositionAtOffset(0, LogicalDirection.Backward);
-         while (start != null)
-         {
-            string text = start.GetTextInRun(LogicalDirection.Backward);
-
-            if (string.IsNullOrEmpty(text) || char.IsWhiteSpace(text[0]))
-            {
-               break;
-            }
-
-            word = text.Substring(0, text.Length - 1);
-            start = start.GetPositionAtOffset(-1, LogicalDirection.Backward);
-         }
-
-         string currentText = position.GetTextInRun(LogicalDirection.Backward);
-         if (!string.IsNullOrEmpty(currentText))
-         {
-            word = currentText.Substring(0, currentText.Length);
-         }
-
-         return word.Trim();
+         return InputTextBox.GetLineText(InputTextBox.GetLineIndexFromCharacterIndex(InputTextBox.CaretIndex));
       }
       private void OnAutocompleteSelectionChanged(object sender, SelectionChangedEventArgs e)
       {
@@ -163,42 +187,33 @@ namespace ValveSpriteSheetUtil
          if (selectedItem == null)
             return;
 
-         var caretPosition = InputTextBox.CaretPosition;
-         if (caretPosition == null)
+         var caretIndex = InputTextBox.CaretIndex;
+         if (caretIndex < 0)
             return;
 
-         TextPointer startOfRemoval = caretPosition.GetPositionAtOffset(0, LogicalDirection.Backward);
-         while (startOfRemoval != null)
-         {
-            string textInRun = startOfRemoval.GetTextInRun(LogicalDirection.Backward);
+         // Get the default value from the dictionary
+         var defaultValue = ValidParamsDict.TryGetValue(selectedItem.ToLowerInvariant(), out var entry)
+             ? entry.defaultValue
+             : null;
 
-            if (!string.IsNullOrEmpty(textInRun) && !char.IsWhiteSpace(textInRun[0]))
-            {
-               startOfRemoval = startOfRemoval.GetPositionAtOffset(-1, LogicalDirection.Backward);
-            }
-            else
-            {
-               break;
-            }
+         // Create the text to insert
+         var textToInsert = string.IsNullOrEmpty(defaultValue)
+             ? selectedItem
+             : $"{selectedItem} {defaultValue}";
+
+         // Find the start of the current word to be replaced
+         int startOfRemoval = caretIndex;
+         while (startOfRemoval > 0 && !char.IsWhiteSpace(InputTextBox.Text[startOfRemoval - 1]))
+         {
+            startOfRemoval--;
          }
 
-         if (startOfRemoval != null)
-         {
-            startOfRemoval = startOfRemoval.GetPositionAtOffset(0, LogicalDirection.Forward);
-         }
+         // Replace the text with the selected item and default value
+         InputTextBox.Text = InputTextBox.Text.Remove(startOfRemoval, caretIndex - startOfRemoval) + textToInsert;
+         InputTextBox.CaretIndex = startOfRemoval + textToInsert.Length;
 
-         TextPointer endOfRemoval = caretPosition;
-
-         if (startOfRemoval != null && endOfRemoval != null)
-         {
-            TextRange textRange = new TextRange(startOfRemoval, endOfRemoval);
-            textRange.Text = selectedItem;
-         }
-
+         // Close the autocomplete popup
          AutocompletePopup.IsOpen = false;
-
-         var newCaretPosition = startOfRemoval.GetPositionAtOffset(selectedItem.Length, LogicalDirection.Forward);
-         InputTextBox.CaretPosition = newCaretPosition ?? InputTextBox.CaretPosition;
       }
 
       private (bool isValid, string errorMessage) ParseAndValidate(string input)
@@ -214,7 +229,7 @@ namespace ValveSpriteSheetUtil
             }
 
             string parameter = parts[0].ToLowerInvariant();
-            if (!ValidParams.Contains(parameter))
+            if (!ValidParamsDict.Keys.Contains(parameter))
             {
                return (false, $"Unknown parameter: {parameter}");
             }
@@ -241,7 +256,7 @@ namespace ValveSpriteSheetUtil
             "alphatest" or "nodebug" or "nolod" or "nomip" or "nonice" or "normal" or "normalalphatodudvluminance"
             or "normaltodudv" or "nocompress" or "allmips" or "anisotropic" or "pointsample" or "manualmip"
             or "dxt5" or "stripalphachannel" or "stripcolorchannel" or "rendertarget" or "procedural"
-            or "singlecopy" or "ssbump" or "trilinear" or "volumetexture" or "invertgreen" => ValidateBooleanFlag(value),
+            or "singlecopy" or "ssbump" or "trilinear" or "volumetexture" or "invertgreen" or "srgb" => ValidateBooleanFlag(value),
             "alphatest_threshhold" or "alphatest_hifreq_threshhold" or "distancespread" or "oneovermiplevelinalpha"
             or "premultcolorbyoneovermiplevel" => ValidateAlphaThreshold(value),
             "clamps" or "clampt" or "clampu" => ValidateBooleanFlag(value),
@@ -265,7 +280,7 @@ namespace ValveSpriteSheetUtil
           int.TryParse(value, out int numChannels) && numChannels >= 1 && numChannels <= 4;
       private static bool ValidateNonNegativeInteger(string value) =>
           int.TryParse(value, out int intValue) && intValue >= 0;
-      private bool ValidateMipBlend(string value)
+      private static bool ValidateMipBlend(string value)
       {
          var validKeys = new[] { "r", "g", "b", "a", "detail", "skip" };
          var parts = value.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);

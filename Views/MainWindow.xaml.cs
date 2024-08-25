@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using System.Windows;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ValveSpriteSheetUtil
 {
@@ -18,7 +19,6 @@ namespace ValveSpriteSheetUtil
 
       private void InitializeSpriteSheetManager()
       {
-         
          string tf2Folder = appSettings.TeamFortressFolder;
          string frameFolder = appSettings.FrameFolder;
          spriteSheetManager = new SpriteSheetManager(tf2Folder, frameFolder);
@@ -28,13 +28,14 @@ namespace ValveSpriteSheetUtil
          prefixTextBox.Text = appSettings.Prefix;
          vtfNameTextBox.Text = appSettings.FileName;
 
+
       }
       private void SelectTf2Folder_Click(object sender, RoutedEventArgs e)
       {
          string selectedPath = OpenFolderDialog();
          if (!string.IsNullOrEmpty(selectedPath))
          {
-            spriteSheetManager.SetTf2Folder(selectedPath);
+            spriteSheetManager.tf2Folder = selectedPath;
             appSettings.TeamFortressFolder = selectedPath;
             appSettings.Save();
             tf2FolderTextBox.Text = selectedPath;
@@ -45,7 +46,7 @@ namespace ValveSpriteSheetUtil
          string selectedPath = OpenFolderDialog();
          if (!string.IsNullOrEmpty(selectedPath))
          {
-            spriteSheetManager.SetFrameFolder(selectedPath);
+            spriteSheetManager.frameFolder = selectedPath;
             appSettings.FrameFolder = selectedPath;
             appSettings.Save();
             frameTextBox.Text = selectedPath;
@@ -70,13 +71,13 @@ namespace ValveSpriteSheetUtil
       }
       private void Tf2FolderTextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
       {
-         spriteSheetManager.SetTf2Folder(tf2FolderTextBox.Text);
+         spriteSheetManager.tf2Folder = tf2FolderTextBox.Text;
          appSettings.TeamFortressFolder = tf2FolderTextBox.Text;
          appSettings.Save();
       }
       private void FrameTextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
       {
-         spriteSheetManager.SetFrameFolder(frameTextBox.Text);
+         spriteSheetManager.frameFolder = frameTextBox.Text;
          appSettings.FrameFolder = frameTextBox.Text;
          appSettings.Save();
       }
@@ -93,7 +94,7 @@ namespace ValveSpriteSheetUtil
       }
       private void CreateVTFFile_Click(object sender, RoutedEventArgs e)
       {
-         spriteSheetManager.SetFileName(vtfNameTextBox.Text);
+         spriteSheetManager.fileName = vtfNameTextBox.Text;
          string result = spriteSheetManager.CreateVTFFile(appSettings.VTEXConfig);
          Console.WriteLine(result);
       }

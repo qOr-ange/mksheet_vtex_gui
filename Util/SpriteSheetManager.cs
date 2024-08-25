@@ -10,10 +10,11 @@ namespace ValveSpriteSheetUtil
 {
    public class SpriteSheetManager
    {
-      private string tf2Folder;
-      private string frameFolder;
-      private string fileName;
-      private string mksFile;
+      public string tf2Folder {  get; set; }
+      public string frameFolder { get; set; }
+      public string fileName { get; set; }
+      public string mksFile { get; set; }
+
       private List<string> frames = new List<string>();
 
       public SpriteSheetManager(string tf2Folder, string frameFolder)
@@ -23,18 +24,6 @@ namespace ValveSpriteSheetUtil
 
       }
 
-      public void SetFileName(string name)
-      {
-         fileName = name;
-      }
-      public void SetTf2Folder(string path)
-      {
-         tf2Folder = path;
-      }
-      public void SetFrameFolder(string path)
-      {
-         frameFolder = path;
-      }
       public string CleanFileName(string name)
       {
          return string.Concat(name.Split(Path.GetInvalidFileNameChars()));
@@ -67,10 +56,9 @@ namespace ValveSpriteSheetUtil
          if (frames.Count == 0)
             return $"No frames with prefix {prefix} found.";
 
-         // Custom sorting by numeric suffix
+         // sorting by numeric suffix
          frames.Sort((x, y) =>
          {
-            // Extract numeric suffix from file names
             int GetNumericSuffix(string fileName)
             {
                var parts = fileName.Split('_');

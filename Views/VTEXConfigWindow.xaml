@@ -2,11 +2,14 @@
    x:Class="ValveSpriteSheetUtil.VTEXConfigWindow"
    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+   xmlns:av="http://schemas.microsoft.com/expression/blend/2008"
+   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
    Title="VTEXConfig"
    Width="500"
    Height="400"
    ResizeMode="NoResize"
-   WindowStartupLocation="CenterScreen">
+   WindowStartupLocation="CenterScreen"
+   mc:Ignorable="av">
    <Window.Background>
       <SolidColorBrush Color="{DynamicResource BG.Dark}" />
    </Window.Background>
@@ -27,35 +30,35 @@
          </Label.Foreground>
       </Label>
 
-      <RichTextBox
-         Name="InputTextBox"
+      <TextBox
+         x:Name="InputTextBox"
          Grid.Row="1"
          Margin="0,0,0,3"
          AcceptsReturn="True"
          AcceptsTab="False"
          Block.LineHeight="2"
-         TextChanged="OnRichTextBoxTextChanged"
+         TextChanged="OnTextBoxTextChanged"
          VerticalScrollBarVisibility="Auto">
-         <RichTextBox.Background>
+         <TextBox.Background>
             <SolidColorBrush Color="{DynamicResource BG.Light}" />
-         </RichTextBox.Background>
-         <RichTextBox.BorderBrush>
+         </TextBox.Background>
+         <TextBox.BorderBrush>
             <SolidColorBrush Color="{DynamicResource BG.Lighter}" />
-         </RichTextBox.BorderBrush>
-         <RichTextBox.Foreground>
+         </TextBox.BorderBrush>
+         <TextBox.Foreground>
             <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
-         </RichTextBox.Foreground>
-      </RichTextBox>
+         </TextBox.Foreground>
+      </TextBox>
 
       <StackPanel
          Grid.Row="2"
-         Width="160"
          Height="20"
+         Margin="224,0,0,0"
          HorizontalAlignment="Right"
          VerticalAlignment="Center"
          Orientation="Horizontal">
          <Button
-            Name="button1"
+            x:Name="button1"
             Width="75"
             Margin="0,0,10,0"
             Click="OnCancelClick"
@@ -72,7 +75,7 @@
             </Button.Foreground>
          </Button>
          <Button
-            Name="button2"
+            x:Name="button2"
             Width="75"
             Click="OnSaveClick"
             Content="Done"
@@ -90,15 +93,33 @@
       </StackPanel>
 
       <Popup
-         Name="AutocompletePopup"
+         x:Name="AutocompletePopup"
          Width="Auto"
          Height="Auto"
          Style="{DynamicResource AutocompletePopupStyle}">
          <ListBox
-            Name="AutocompleteListBox"
+            x:Name="AutocompleteListBox"
             SelectionChanged="OnAutocompleteSelectionChanged"
             Style="{StaticResource AutocompleteListBoxStyle}" />
       </Popup>
+      <ComboBox
+         x:Name="TemplateComboBox"
+         Width="246"
+         Height="19"
+         Margin="0,0,5,0"
+         HorizontalAlignment="Right"
+         VerticalAlignment="Center"
+         Style="{DynamicResource GeneralComboBoxStyle}">
+         <ComboBox.Foreground>
+            <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+         </ComboBox.Foreground>
+         <ComboBox.BorderBrush>
+            <SolidColorBrush Color="{DynamicResource BG.Lighter}" />
+         </ComboBox.BorderBrush>
+         <ComboBox.Background>
+            <SolidColorBrush Color="{DynamicResource BG.Light}" />
+         </ComboBox.Background>
+      </ComboBox>
 
    </Grid>
 </Window>

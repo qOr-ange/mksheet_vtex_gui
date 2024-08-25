@@ -64,11 +64,16 @@
                         SnapsToDevicePixels="True">
                         <Border
                            x:Name="DropDownBorder"
+                           Margin="2"
                            Background="{TemplateBinding Background}"
                            BorderBrush="{TemplateBinding BorderBrush}"
                            BorderThickness="1"
                            CornerRadius="2" />
-                        <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
+
+                        <ScrollViewer
+                           Margin="4,6,4,6"
+                           SnapsToDevicePixels="True"
+                           Style="{DynamicResource GeneralScrollViewerStyle}">
                            <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" SnapsToDevicePixels="True" />
                         </ScrollViewer>
                      </Grid>

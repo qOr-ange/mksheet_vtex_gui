@@ -82,5 +82,29 @@ namespace ValveSpriteSheetUtil {
                 this["FileName"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string VTEXTemplates {
+            get {
+                return ((string)(this["VTEXTemplates"]));
+            }
+            set {
+                this["VTEXTemplates"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool tmlpDontAskAgain {
+            get {
+                return ((bool)(this["tmlpDontAskAgain"]));
+            }
+            set {
+                this["tmlpDontAskAgain"] = value;
+            }
+        }
     }
 }

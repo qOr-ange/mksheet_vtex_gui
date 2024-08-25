@@ -109,6 +109,7 @@
          Margin="0,0,5,0"
          HorizontalAlignment="Right"
          VerticalAlignment="Center"
+         SelectionChanged="TemplateComboBox_SelectionChanged"
          Style="{DynamicResource GeneralComboBoxStyle}">
          <ComboBox.Foreground>
             <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
@@ -119,6 +120,47 @@
          <ComboBox.Background>
             <SolidColorBrush Color="{DynamicResource BG.Light}" />
          </ComboBox.Background>
+         <!--  Custom ComboBoxItem with TextBox and Button  -->
+         <ComboBoxItem>
+            <StackPanel HorizontalAlignment="Stretch" Orientation="Horizontal">
+               <TextBox
+                  x:Name="NewTemplateTextBox"
+                  Width="202"
+                  Height="23"
+                  Margin="0,0,5,0"
+                  VerticalAlignment="Center"
+                  Style="{DynamicResource GeneralTextBoxStyle}"
+                  Text="NewTemplate"
+                  TextChanged="OnTextBoxTextChanged">
+                  <TextBox.BorderBrush>
+                     <SolidColorBrush Color="{DynamicResource BG.Dark}" />
+                  </TextBox.BorderBrush>
+                  <TextBox.Background>
+                     <SolidColorBrush Color="{DynamicResource BG.Light}" />
+                  </TextBox.Background>
+                  <TextBox.Foreground>
+                     <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+                  </TextBox.Foreground>
+               </TextBox>
+               <Button
+                  Width="20"
+                  Height="20"
+                  VerticalAlignment="Center"
+                  Click="OnAddTemplateClick"
+                  Content="+"
+                  Style="{DynamicResource GeneralButtonStyle}">
+                  <Button.Background>
+                     <SolidColorBrush Color="{DynamicResource BG.Light}" />
+                  </Button.Background>
+                  <Button.BorderBrush>
+                     <SolidColorBrush Color="{DynamicResource BG.Lighter}" />
+                  </Button.BorderBrush>
+                  <Button.Foreground>
+                     <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+                  </Button.Foreground>
+               </Button>
+            </StackPanel>
+         </ComboBoxItem>
       </ComboBox>
 
    </Grid>

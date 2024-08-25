@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using System.Windows;
+using ValveSpriteSheetUtil.Util;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace ValveSpriteSheetUtil
@@ -32,7 +33,7 @@ namespace ValveSpriteSheetUtil
       }
       private void SelectTf2Folder_Click(object sender, RoutedEventArgs e)
       {
-         string selectedPath = OpenFolderDialog();
+         string selectedPath = GetFolderHelper.OpenFolderDialog();
          if (!string.IsNullOrEmpty(selectedPath))
          {
             spriteSheetManager.tf2Folder = selectedPath;
@@ -43,7 +44,7 @@ namespace ValveSpriteSheetUtil
       }
       private void SelectFrameFolder_Click(object sender, RoutedEventArgs e)
       {
-         string selectedPath = OpenFolderDialog();
+         string selectedPath = GetFolderHelper.OpenFolderDialog();
          if (!string.IsNullOrEmpty(selectedPath))
          {
             spriteSheetManager.frameFolder = selectedPath;
@@ -52,23 +53,7 @@ namespace ValveSpriteSheetUtil
             frameTextBox.Text = selectedPath;
          }
       }
-      private string OpenFolderDialog()
-      {
-         var folderDialog = new OpenFolderDialog
-         {
-            Title = "Select Team Fortress 2 folder",
-            ValidateNames = false,
-            AddToRecent = true,
-         };
-
-         if (folderDialog.ShowDialog() == true)
-         {
-            var selectedPath = folderDialog.FolderName;
-            return selectedPath;
-         }
-
-         return null;
-      }
+      
       private void Tf2FolderTextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
       {
          spriteSheetManager.tf2Folder = tf2FolderTextBox.Text;
@@ -134,7 +119,7 @@ namespace ValveSpriteSheetUtil
       }
       private void OpenVtexConfig_Click(object sender, RoutedEventArgs e)
       {
-         var vtexConfigWindow = new VTEXConfigWindow(appSettings.VTEXConfig);
+         var vtexConfigWindow = new VTEXConfigWindow(appSettings.VTEXConfig, appSettings.VTEXTemplates);
 
          if (vtexConfigWindow.ShowDialog() == true)
          {

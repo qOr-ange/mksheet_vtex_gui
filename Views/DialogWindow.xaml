@@ -7,9 +7,10 @@
    Title="{Binding Title}"
    Width="500"
    Height="300"
+   Icon="pack://application:,,,/img/icon.ico"
    ResizeMode="NoResize"
    WindowStartupLocation="CenterScreen"
-   mc:Ignorable="d" Icon="/icon.ico">
+   mc:Ignorable="d">
    <Window.BorderBrush>
       <SolidColorBrush Color="{DynamicResource BG.Lighter}" />
    </Window.BorderBrush>

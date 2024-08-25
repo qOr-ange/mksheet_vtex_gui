@@ -5,8 +5,9 @@
    Title="Animated Sprite Utility"
    Width="678"
    Height="252"
+   Icon="pack://application:,,,/img/icon.ico"
    ResizeMode="NoResize"
-   WindowStartupLocation="CenterScreen" Icon="/icon.ico">
+   WindowStartupLocation="CenterScreen">
    <Window.Background>
       <SolidColorBrush Color="{DynamicResource BG.Dark}" />
    </Window.Background>

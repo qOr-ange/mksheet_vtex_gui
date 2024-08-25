@@ -7,9 +7,10 @@
    Title="VTEXConfig"
    Width="500"
    Height="400"
+   Icon="pack://application:,,,/img/icon.ico"
    ResizeMode="NoResize"
    WindowStartupLocation="CenterScreen"
-   mc:Ignorable="av" Icon="/Views/icon.ico">
+   mc:Ignorable="av">
    <Window.Background>
       <SolidColorBrush Color="{DynamicResource BG.Dark}" />
    </Window.Background>
@@ -164,9 +165,10 @@
       </ComboBox>
       <Label
          Height="26"
+         Margin="0,-4,35,0"
          HorizontalAlignment="Right"
          VerticalAlignment="Center"
-         Content="Templates:" Margin="0,-4,35,0">
+         Content="Templates:">
          <Label.Foreground>
             <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
          </Label.Foreground>

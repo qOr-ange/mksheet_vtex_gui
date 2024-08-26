@@ -203,7 +203,30 @@ namespace ValveSpriteSheetUtil
             processStartInfo.WorkingDirectory = tf2Bin;
             processStartInfo.FileName = "cmd.exe";
             processStartInfo.Arguments = "/C mksheet.exe " + fileName + ".mks";
+            processStartInfo.UseShellExecute = false;
+            processStartInfo.RedirectStandardOutput = true;
+            processStartInfo.RedirectStandardError = true;
             System.Diagnostics.Process mksheet = System.Diagnostics.Process.Start(processStartInfo);
+
+
+
+            mksheet.OutputDataReceived += (sender, e) =>
+            {
+               if (!string.IsNullOrEmpty(e.Data))
+               {
+                  ConsoleLog.WriteLine("mksheet.exe | " + e.Data, Status.None);
+               }
+            };
+
+            mksheet.ErrorDataReceived += (sender, e) =>
+            {
+               if (!string.IsNullOrEmpty(e.Data))
+               {
+                  ConsoleLog.WriteLine("mksheet.exe | " + e.Data, Status.Error);
+               }
+            };
+            mksheet.BeginOutputReadLine();
+            mksheet.BeginErrorReadLine();
             mksheet.WaitForExit();
 
 
@@ -249,11 +272,12 @@ namespace ValveSpriteSheetUtil
       }
       private void CreateVTFFromSHT(string tf2Bin, string vtexParams)
       {
-         string vtfLocation = Path.Combine(AppSettingsHelper.GetSetting(x => x.FrameFolder), $"{fileName}.vtf");
-         if (File.Exists(vtfLocation))
-         {
-            File.Delete(vtfLocation);
-         }
+         string outputFolder = Path.Combine(AppSettingsHelper.GetSetting(x => x.FrameFolder), "[output]");
+         Directory.CreateDirectory(outputFolder);
+         string vtfLocation = Path.Combine(outputFolder, $"{fileName}.vtf");
+
+
+
          if (vtexParams.Length > 0)
          {
             File.WriteAllText(AppSettingsHelper.GetSetting(x => x.TeamFortressFolder) + "\\tf\\materialsrc\\" + fileName + ".txt", vtexParams, new UTF8Encoding(false));
@@ -263,9 +287,30 @@ namespace ValveSpriteSheetUtil
             WorkingDirectory = Environment.GetEnvironmentVariable("SYSTEMROOT"),
             Arguments = $"/C set VGAME={AppSettingsHelper.GetSetting(x => x.TeamFortressFolder)} & set VPROJECT={Path.Combine(AppSettingsHelper.GetSetting(x => x.TeamFortressFolder), "tf")} & \"{Path.Combine(tf2Bin, "vtex.exe")}\" -nopause \"{Path.Combine(AppSettingsHelper.GetSetting(x => x.TeamFortressFolder), "tf", "materialsrc", $"{fileName}.sht")}\"",
             CreateNoWindow = true,
-            UseShellExecute = false
+            UseShellExecute = false,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
          };
+
          var vtexProcess = Process.Start(processInfo);
+
+         vtexProcess.OutputDataReceived += (sender, e) =>
+         {
+            if (!string.IsNullOrEmpty(e.Data))
+            {
+               ConsoleLog.WriteLine("vtex.exe | " + e.Data, Status.None);
+            }
+         };
+
+         vtexProcess.ErrorDataReceived += (sender, e) =>
+         {
+            if (!string.IsNullOrEmpty(e.Data))
+            {
+               ConsoleLog.WriteLine("vtex.exe | " + e.Data, Status.Error);
+            }
+         };
+         vtexProcess.BeginOutputReadLine();
+         vtexProcess.BeginErrorReadLine();
          vtexProcess.WaitForExit();
 
          // Clean up files
@@ -276,14 +321,29 @@ namespace ValveSpriteSheetUtil
             File.Delete(AppSettingsHelper.GetSetting(x => x.TeamFortressFolder) + "\\tf\\materialsrc\\" + fileName + ".txt");
          }
 
-         if (File.Exists(vtfLocation))
-         {
-            File.Delete(vtfLocation);
-         }
-         File.Move(Path.Combine(AppSettingsHelper.GetSetting(x => x.TeamFortressFolder), "tf", "materials", $"{fileName}.vtf"), vtfLocation);
-
+         File.Move(Path.Combine(AppSettingsHelper.GetSetting(x => x.TeamFortressFolder), "tf", "materials", $"{fileName}.vtf"), vtfLocation, true);
          ConsoleLog.WriteLine($"Done! {fileName}.vtf created.", Status.Success);
+         ConsoleLog.WriteLine($"Path: {vtfLocation}", Status.Info);
+
+
+         OpenOutputFolder(outputFolder);
       }
+
+      private void OpenOutputFolder(string outputFolder)
+      {
+         Process p = new Process()
+         {
+            StartInfo = new ProcessStartInfo()
+            {
+               FileName = outputFolder,
+               UseShellExecute = true,
+               Verb = "open"
+            }
+         };
+         p.Start();
+      }
+
+
       public void ConvertPngToTga(string prefix)
       {
          string[] files = Directory.GetFiles(AppSettingsHelper.GetSetting(x => x.FrameFolder));

@@ -16,7 +16,7 @@ internal class VtexTemplateHelper
    public void LoadTemplates(string vtexTemplatespath)
    {
       if (string.IsNullOrEmpty(vtexTemplatespath))
-         vtexTemplatespath = TemplatesProntFolder();
+         vtexTemplatespath = TemplatesPromtFolder();
 
       if (!File.Exists(vtexTemplatespath))
       {
@@ -62,9 +62,7 @@ internal class VtexTemplateHelper
          MessageBoxUtils.ShowErrorDialog($"Failed to load templates: {ex.Message}");
       }
    }
-
-
-   private string TemplatesProntFolder()
+   private string TemplatesPromtFolder()
    {
       bool? result = MessageBoxUtils.ShowSelectPathDialog("No path provided for vtexTemplates.json. Do you want to select a custom location?", 
          x => x.tmlpDontAskAgain);
@@ -80,11 +78,6 @@ internal class VtexTemplateHelper
       }
       return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "vtexTemplates.json");
    }
-
-
-
-
-
    public void SaveTemplates()
    {
       try

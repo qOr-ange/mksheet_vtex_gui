@@ -105,23 +105,14 @@ namespace ValveSpriteSheetUtil
             return;
          }
 
-         // Add the new template with empty parameters
          vtexTemplateHelper.AddTemplate(newTemplateName, InputTextBox.Text);
          vtexTemplateHelper.SaveTemplates();
-         // Update ComboBox
+
          TemplateComboBox.Items.Insert(TemplateComboBox.Items.Count - 1, new ComboBoxItem { Content = newTemplateName });
          TemplateComboBox.SelectedItem = newTemplateName;
 
-         // Optionally clear the TextBox
          NewTemplateTextBox.Clear();
       }
-      private void OnTemplateTextBoxTextChanged(object sender, EventArgs e)
-      {
-         
-      }
-
-
-
 
       private void OnCancelClick(object sender, RoutedEventArgs e) => Close();
       private void OnSaveClick(object sender, RoutedEventArgs e)

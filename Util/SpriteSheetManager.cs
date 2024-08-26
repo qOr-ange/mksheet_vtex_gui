@@ -6,119 +6,134 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using TGASharpLib;
+using ValveSpriteSheetUtil.Util;
 namespace ValveSpriteSheetUtil
 {
    public class SpriteSheetManager
    {
-      public string tf2Folder {  get; set; }
-      public string frameFolder { get; set; }
       public string fileName { get; set; }
       public string mksFile { get; set; }
 
-      private List<string> frames = new List<string>();
+      private List<string> frames {  get; set; } = new List<string>();
 
-      public SpriteSheetManager(string tf2Folder, string frameFolder)
+      public SpriteSheetManager() 
       {
-         this.tf2Folder = tf2Folder;
-         this.frameFolder = frameFolder;
-
+         
       }
-
       public string CleanFileName(string name)
       {
          return string.Concat(name.Split(Path.GetInvalidFileNameChars()));
       }
       public string CreateMKSFile(string prefix, string fileName, bool splitSequences, bool loop)
       {
-         if (string.IsNullOrEmpty(fileName))
-            return "Please enter a desired name for your VTF.";
-
-         if (!Directory.Exists(tf2Folder))
-            return $"{tf2Folder} is not a valid directory.";
-
-         if (!Directory.Exists(frameFolder))
-            return $"{frameFolder} is not a valid directory.";
-
-         // Find and filter frames
-         string[] files = Directory.GetFiles(frameFolder);
-         frames.Clear();
-         foreach (var file in files)
+         using (MKSFileHandler handler = new MKSFileHandler())
          {
-            if (Path.GetFileName(file).StartsWith(prefix) && Path.GetExtension(file).ToLower().Equals(".tga"))
-            {
-               if (Path.GetFileName(file).Contains(" "))
-                  return "Error: mksheet.exe breaks when frame names contain spaces. Rename and try again.";
-
-               frames.Add(Path.GetFileName(file));
-            }
+            (mksFile, frames) = handler.CreateMKSFile(prefix, fileName, splitSequences, loop);
          }
-
-         if (frames.Count == 0)
-            return $"No frames with prefix {prefix} found.";
-
-         // sorting by numeric suffix
-         frames.Sort((x, y) =>
-         {
-            int GetNumericSuffix(string fileName)
-            {
-               var parts = fileName.Split('_');
-               var lastPart = parts.Last();
-               return int.TryParse(Path.GetFileNameWithoutExtension(lastPart), out int result) ? result : 0;
-            }
-
-            return GetNumericSuffix(x).CompareTo(GetNumericSuffix(y));
-         });
-
-         // Create MKS file
-         mksFile = Path.Combine(frameFolder, $"{fileName}.mks");
-         var mksContent = new StringBuilder();
-
-         for (int i = 0; i < frames.Count; i++)
-         {
-            if (i == 0)
-            {
-               mksContent.AppendLine("sequence 0");
-               if (loop) mksContent.AppendLine("LOOP");
-            }
-            else if (splitSequences)
-            {
-               mksContent.AppendLine($"\r\nsequence {i}");
-               if (loop) mksContent.AppendLine("LOOP");
-            }
-
-            mksContent.Append($"frame {frames[i]} 1"); // Append the frame without a newline
-
-            if (i < frames.Count - 1) // Add a new line only if this isn't the last frame
-            {
-               mksContent.AppendLine();
-            }
-         }
-
-         File.WriteAllText(mksFile, mksContent.ToString(), new UTF8Encoding(false));
 
          return $"Done! {fileName}.mks created. Make any changes now.";
       }
-      public string CreateVTFFile(string vtexParams)
-      {
-         if (frames == null || frames.Count == 0 || string.IsNullOrEmpty(mksFile))
-            return "MKS file or frames are not properly initialized.";
 
-         string tf2Bin = Path.Combine(tf2Folder, "bin", "x64");
+      public void OpenMKSFileForEditing()
+      {
+         if (string.IsNullOrEmpty(AppSettingsHelper.GetSetting(x => x.TextEditorPath)) && AppSettingsHelper.GetSetting(x => x.UseDefTextEditor) == false)
+         {
+            bool? result = MessageBoxUtils.ShowSelectPathDialog("No path provided for Text Editor, do you want to select a specific text editor or try to use the default text editor?",
+               x => x.UseDefTextEditor); // specific setting for don't ask again option.
+
+            if (result == true)
+            {
+               string selectedPath = IOHelper.OpenFileDialog(IOHelper.FilterType.ExecutableFiles);
+               if (!string.IsNullOrEmpty(selectedPath))
+               {
+                  AppSettingsHelper.SetSetting(x => x.TextEditorPath, selectedPath);
+               }
+            }
+
+            if (result == false)
+            {
+               AppSettingsHelper.SetSetting(x => x.UseDefTextEditor, true);
+            }
+         }
 
          try
          {
+            Console.WriteLine("Save & Close text editor to continue.");
 
+            Process process = new Process();
+
+            if (!AppSettingsHelper.GetSetting(x => x.UseDefTextEditor))
+            {
+               process.StartInfo = new ProcessStartInfo()
+               {
+                  FileName = AppSettingsHelper.GetSetting(x => x.TextEditorPath),
+                  Arguments = mksFile,
+                  UseShellExecute = true
+               };
+            }
+            else
+            {
+               process.StartInfo = new ProcessStartInfo()
+               {
+                  FileName = mksFile,
+                  UseShellExecute = true
+               };
+            }
+
+            process.Start();
+            process.WaitForExit();
+
+            string postEditValidationResult = ValidateMKSFile();
+            if (!string.IsNullOrEmpty(postEditValidationResult))
+            {
+               Console.WriteLine($"Validation failed: {postEditValidationResult}");
+            }
+         }
+         catch (Exception ex)
+         {
+            Console.WriteLine($"Couldn't open {mksFile} in text editor. Error: {ex.Message}");
+         }
+      }
+
+
+      private string ValidateMKSFile()
+      {
+         if (!File.Exists(mksFile))
+            return "Error: The .mks file does not exist after editing.";
+
+         // Add more validation checks here if needed.
+         // Example: Validate the content of the .mks file
+
+         return null;
+      }
+
+
+      public string CreateVTFFile()
+      {
+            ConsoleLog.WriteLine($"Frames: {frames.Count}", Status.Info);
+         if (frames == null || frames.Count == 0 || string.IsNullOrEmpty(mksFile))
+            return "MKS file or frames are not properly initialized.";
+
+         string tf2Bin = Path.Combine(AppSettingsHelper.GetSetting(x => x.TeamFortressFolder), "bin", "x64");
+
+         try
+         {
             //Copy/move all relevant files to /bin
             foreach (string frame in frames)
             {
-               File.Copy(frameFolder + "\\" + frame, tf2Bin + "\\" + frame, true);
-               Console.WriteLine($"copied: {frameFolder + "\\" + frame} to: {tf2Bin + "\\" + frame}");
+               File.Copy(AppSettingsHelper.GetSetting(x => x.FrameFolder) + "\\" + frame, tf2Bin + "\\" + frame, true);
             }
             File.Move(mksFile, tf2Bin + "\\" + fileName + ".mks", true);
 
+            if (File.Exists(tf2Bin + "\\" + fileName + ".sht"))
+            {
+               File.Delete(tf2Bin + "\\" + fileName + ".sht");
+            }
+
+            
             //Create SHT and TGA
             var processStartInfo = new System.Diagnostics.ProcessStartInfo();
-            processStartInfo.WorkingDirectory = tf2Folder + "\\bin\\x64\\";
+            processStartInfo.WorkingDirectory = tf2Bin;
             processStartInfo.FileName = "cmd.exe";
             processStartInfo.Arguments = "/C mksheet.exe " + fileName + ".mks";
             System.Diagnostics.Process mksheet = System.Diagnostics.Process.Start(processStartInfo);
@@ -127,7 +142,7 @@ namespace ValveSpriteSheetUtil
 
             if (File.Exists(tf2Bin + "\\" + fileName + ".sht"))
             {
-               Console.WriteLine(".sht file created successfully!");
+               ConsoleLog.WriteLine($"{fileName}.sht file created successfully!", Status.Info);
             }
             else
             {
@@ -136,11 +151,9 @@ namespace ValveSpriteSheetUtil
 
                if (!File.Exists(tf2Bin + "\\" + fileName + ".mks"))
                {
-                  Console.WriteLine(".mks file not found!");
+                  ConsoleLog.WriteLine($"{fileName}.mks file not found!", Status.Error);
                }
             }
-
-
 
             //Delete files that are no longer needed
             foreach (string frame in frames)
@@ -150,16 +163,17 @@ namespace ValveSpriteSheetUtil
             File.Delete(tf2Bin + "\\" + fileName + ".mks");
 
             //If materialsrc does not yet exist, create it
-            if (!File.Exists(tf2Folder + "\\tf\\materialsrc"))
+            if (!File.Exists(AppSettingsHelper.GetSetting(x => x.TeamFortressFolder) + "\\tf\\materialsrc"))
             {
-               _ = Directory.CreateDirectory(tf2Folder + "\\tf\\materialsrc");
+               _ = Directory.CreateDirectory(AppSettingsHelper.GetSetting(x => x.TeamFortressFolder) + "\\tf\\materialsrc");
             }
             
             //Move tga and sht files to materialsrc
-            File.Move(tf2Bin +"\\"+ fileName + ".sht", tf2Folder + "\\tf\\materialsrc\\" + fileName + ".sht");
-            File.Move(tf2Bin +"\\"+ fileName + ".tga", tf2Folder + "\\tf\\materialsrc\\" + fileName + ".tga");
-            
-            return CreateVTFFromSHT(tf2Bin, vtexParams);
+            File.Move(tf2Bin +"\\"+ fileName + ".sht", AppSettingsHelper.GetSetting(x => x.TeamFortressFolder) + "\\tf\\materialsrc\\" + fileName + ".sht");
+            File.Move(tf2Bin +"\\"+ fileName + ".tga", AppSettingsHelper.GetSetting(x => x.TeamFortressFolder) + "\\tf\\materialsrc\\" + fileName + ".tga");
+
+            ConsoleLog.WriteLine("Building VTF file, please wait, this may take a while...", Status.Info);
+            return CreateVTFFromSHT(tf2Bin, AppSettingsHelper.GetSetting(x => x.VTEXConfig));
          }
          catch (Exception ex)
          {
@@ -168,14 +182,19 @@ namespace ValveSpriteSheetUtil
       }
       private string CreateVTFFromSHT(string tf2Bin, string vtexParams)
       {
+         string vtfLocation = Path.Combine(AppSettingsHelper.GetSetting(x => x.FrameFolder), $"{fileName}.vtf");
+         if (File.Exists(vtfLocation))
+         {
+            File.Delete(vtfLocation);
+         }
          if (vtexParams.Length > 0)
          {
-            File.WriteAllText(tf2Folder + "\\tf\\materialsrc\\" + fileName + ".txt", vtexParams, new UTF8Encoding(false));
+            File.WriteAllText(AppSettingsHelper.GetSetting(x => x.TeamFortressFolder) + "\\tf\\materialsrc\\" + fileName + ".txt", vtexParams, new UTF8Encoding(false));
          }
          var processInfo = new ProcessStartInfo("cmd.exe")
          {
             WorkingDirectory = Environment.GetEnvironmentVariable("SYSTEMROOT"),
-            Arguments = $"/C set VGAME={tf2Folder} & set VPROJECT={Path.Combine(tf2Folder, "tf")} & \"{Path.Combine(tf2Bin, "vtex.exe")}\" -nopause \"{Path.Combine(tf2Folder, "tf", "materialsrc", $"{fileName}.sht")}\"",
+            Arguments = $"/C set VGAME={AppSettingsHelper.GetSetting(x => x.TeamFortressFolder)} & set VPROJECT={Path.Combine(AppSettingsHelper.GetSetting(x => x.TeamFortressFolder), "tf")} & \"{Path.Combine(tf2Bin, "vtex.exe")}\" -nopause \"{Path.Combine(AppSettingsHelper.GetSetting(x => x.TeamFortressFolder), "tf", "materialsrc", $"{fileName}.sht")}\"",
             CreateNoWindow = true,
             UseShellExecute = false
          };
@@ -183,25 +202,24 @@ namespace ValveSpriteSheetUtil
          vtexProcess.WaitForExit();
 
          // Clean up files
-         File.Delete(Path.Combine(tf2Folder, "tf", "materialsrc", $"{fileName}.sht"));
-         File.Delete(Path.Combine(tf2Folder, "tf", "materialsrc", $"{fileName}.tga"));
+         File.Delete(Path.Combine(AppSettingsHelper.GetSetting(x => x.TeamFortressFolder), "tf", "materialsrc", $"{fileName}.sht"));
+         File.Delete(Path.Combine(AppSettingsHelper.GetSetting(x => x.TeamFortressFolder), "tf", "materialsrc", $"{fileName}.tga"));
          if (vtexParams.Length > 0)
          {
-            File.Delete(tf2Folder + "\\tf\\materialsrc\\" + fileName + ".txt");
+            File.Delete(AppSettingsHelper.GetSetting(x => x.TeamFortressFolder) + "\\tf\\materialsrc\\" + fileName + ".txt");
          }
 
-         string vtfLocation = Path.Combine(frameFolder, $"{fileName}.vtf");
          if (File.Exists(vtfLocation))
          {
             File.Delete(vtfLocation);
          }
-         File.Move(Path.Combine(tf2Folder, "tf", "materials", $"{fileName}.vtf"), vtfLocation);
+         File.Move(Path.Combine(AppSettingsHelper.GetSetting(x => x.TeamFortressFolder), "tf", "materials", $"{fileName}.vtf"), vtfLocation);
 
          return $"Done! {fileName}.vtf created.";
       }
       public string ConvertPngToTga(string prefix)
       {
-         string[] files = Directory.GetFiles(frameFolder);
+         string[] files = Directory.GetFiles(AppSettingsHelper.GetSetting(x => x.FrameFolder));
 
          foreach (var file in files)
          {
@@ -218,7 +236,7 @@ namespace ValveSpriteSheetUtil
       }
       public string CreateVMTFile(string fileName, bool blendFrames, bool depthBlend, bool additive)
       {
-         var vmtPath = Path.Combine(frameFolder, $"{fileName}.vmt");
+         var vmtPath = Path.Combine(AppSettingsHelper.GetSetting(x => x.FrameFolder), $"{fileName}.vmt");
 
          using FileStream fs = File.Create(vmtPath);
          fs.Write(Encoding.UTF8.GetBytes($"\"SpriteCard\"\r\n{{\r\n"));

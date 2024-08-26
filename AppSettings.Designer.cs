@@ -13,7 +13,7 @@ namespace ValveSpriteSheetUtil {
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.10.0.0")]
-    internal sealed partial class AppSettings : global::System.Configuration.ApplicationSettingsBase {
+    public sealed partial class AppSettings : global::System.Configuration.ApplicationSettingsBase {
         
         private static AppSettings defaultInstance = ((AppSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new AppSettings())));
         
@@ -104,6 +104,30 @@ namespace ValveSpriteSheetUtil {
             }
             set {
                 this["tmlpDontAskAgain"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string TextEditorPath {
+            get {
+                return ((string)(this["TextEditorPath"]));
+            }
+            set {
+                this["TextEditorPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UseDefTextEditor {
+            get {
+                return ((bool)(this["UseDefTextEditor"]));
+            }
+            set {
+                this["UseDefTextEditor"] = value;
             }
         }
     }

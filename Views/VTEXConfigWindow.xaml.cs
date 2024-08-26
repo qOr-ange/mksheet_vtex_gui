@@ -6,14 +6,13 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
+using ValveSpriteSheetUtil.Util;
 
 namespace ValveSpriteSheetUtil
 {
    public partial class VTEXConfigWindow : Window
    {
       VtexTemplateHelper vtexTemplateHelper = new VtexTemplateHelper();
-      private string _vtexConfig;
-      private string _vtexTemplatesPath;
       private static readonly Dictionary<string, (string defaultValue, Func<string, bool> validate)> ValidParamsDict = new()
         {
             { "allmips", (null, ValidateBooleanFlag) },
@@ -74,20 +73,17 @@ namespace ValveSpriteSheetUtil
             { "volumetexture", (null, ValidateBooleanFlag) }
         };
 
-      public VTEXConfigWindow(string vtexConfig, string vtexTemplatesPath)
+      public VTEXConfigWindow()
       {
-         _vtexTemplatesPath = vtexTemplatesPath;
-         _vtexConfig = vtexConfig;
          InitializeComponent();
          Loaded += OnWindowLoaded;
          AutocompletePopup.IsOpen = false;
-
          InitializeTemplateComboBox();
       }
 
       private void InitializeTemplateComboBox()
       {
-         vtexTemplateHelper.LoadTemplates(_vtexTemplatesPath);
+         vtexTemplateHelper.LoadTemplates(AppSettingsHelper.GetSetting(x => x.VTEXTemplates));
          foreach (var e in vtexTemplateHelper.VtexTemplates)
          {
             TemplateComboBox.Items.Add(e.Key);
@@ -135,7 +131,7 @@ namespace ValveSpriteSheetUtil
 
          if (isValid)
          {
-            _vtexConfig = userInput;
+            AppSettingsHelper.SetSetting(x => x.VTEXConfig, userInput);
             DialogResult = true;
             Close();
          }
@@ -145,7 +141,7 @@ namespace ValveSpriteSheetUtil
          }
       }
       private void OnWindowLoaded(object sender, RoutedEventArgs e) => LoadTextBoxContent();
-      private void LoadTextBoxContent() => InputTextBox.Text = _vtexConfig;
+      private void LoadTextBoxContent() => InputTextBox.Text = AppSettingsHelper.GetSetting(x => x.VTEXConfig);
       public string GetTextBoxContent() => InputTextBox.Text;
       private void OnTextBoxTextChanged(object sender, TextChangedEventArgs e) => UpdateAutocomplete();
       private void UpdateAutocomplete()

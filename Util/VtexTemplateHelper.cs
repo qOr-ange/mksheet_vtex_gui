@@ -66,14 +66,15 @@ internal class VtexTemplateHelper
 
    private string TemplatesProntFolder()
    {
-      bool? result = MessageBoxUtils.ShowSelectPathDialog();
+      bool? result = MessageBoxUtils.ShowSelectPathDialog("No path provided for vtexTemplates.json. Do you want to select a custom location?", 
+         x => x.tmlpDontAskAgain);
 
       if (result == true)
       {
-         string selectedPath = GetFolderHelper.OpenFolderDialog();
+         string selectedPath = IOHelper.OpenFolderDialog();
          if (!string.IsNullOrEmpty(selectedPath))
          {
-            AppSettingsHelper.VTEXTemplates = Path.Combine(selectedPath, "vtexTemplates.json");
+            AppSettingsHelper.SetSetting(x => x.VTEXTemplates, Path.Combine(selectedPath, "vtexTemplates.json"));
             return Path.Combine(selectedPath, "vtexTemplates.json");
          }
       }

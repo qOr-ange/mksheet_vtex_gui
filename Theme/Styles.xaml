@@ -336,7 +336,19 @@
                               </ColorAnimationUsingKeyFrames>
                            </Storyboard>
                         </VisualState>
-
+                        <VisualState x:Name="Disabled">
+                           <Storyboard>
+                              <ColorAnimationUsingKeyFrames Storyboard.TargetName="border" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)">
+                                 <EasingColorKeyFrame KeyTime="0" Value="{DynamicResource BG.Dark}" />
+                              </ColorAnimationUsingKeyFrames>
+                              <ColorAnimationUsingKeyFrames Storyboard.TargetName="border" Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)">
+                                 <EasingColorKeyFrame KeyTime="0" Value="{DynamicResource BG.Light}" />
+                              </ColorAnimationUsingKeyFrames>
+                              <ColorAnimationUsingKeyFrames Storyboard.TargetName="content" Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)">
+                                 <EasingColorKeyFrame KeyTime="0" Value="{DynamicResource Button.Clicked}" />
+                              </ColorAnimationUsingKeyFrames>
+                           </Storyboard>
+                        </VisualState>
                      </VisualStateGroup>
                   </VisualStateManager.VisualStateGroups>
                </Grid>

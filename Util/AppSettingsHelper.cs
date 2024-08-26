@@ -1,71 +1,35 @@
-﻿namespace ValveSpriteSheetUtil.Util
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Reflection;
+
+namespace ValveSpriteSheetUtil.Util
 {
    public static class AppSettingsHelper
    {
       private static AppSettings appSettings = new AppSettings();
 
-      public static string TF2FolderPath
+      public static T GetSetting<T>(Expression<Func<AppSettings, T>> selector)
       {
-         get => appSettings.TeamFortressFolder;
-         set
-         {
-            appSettings.TeamFortressFolder = value;
-            appSettings.Save();
-         }
+         var property = GetProperty(selector);
+         return (T)property.GetValue(appSettings);
       }
-      public static string FramesFolder
+
+      public static void SetSetting<T>(Expression<Func<AppSettings, T>> selector, T value)
       {
-         get => appSettings.FrameFolder;
-         set
-         {
-            appSettings.FrameFolder = value;
-            appSettings.Save();
-         }
+         var property = GetProperty(selector);
+         property.SetValue(appSettings, value);
+         appSettings.Save();
       }
-      public static string VTEXConfig
+
+      private static PropertyInfo GetProperty<T>(Expression<Func<AppSettings, T>> selector)
       {
-         get => appSettings.VTEXConfig;
-         set
+         if (selector.Body is MemberExpression memberExpression && memberExpression.Member is PropertyInfo property)
          {
-            appSettings.VTEXConfig = value;
-            appSettings.Save();
+            return property;
          }
-      }
-      public static string Prefix
-      {
-         get => appSettings.Prefix;
-         set
-         {
-            appSettings.Prefix = value;
-            appSettings.Save();
-         }
-      }
-      public static string FileName
-      {
-         get => appSettings.FileName;
-         set
-         {
-            appSettings.FileName = value;
-            appSettings.Save();
-         }
-      }
-      public static string VTEXTemplates
-      {
-         get => appSettings.VTEXTemplates;
-         set
-         {
-            appSettings.VTEXTemplates = value;
-            appSettings.Save();
-         }
-      }
-      public static bool DontAskAgain_Templates
-      {
-         get => appSettings.tmlpDontAskAgain;
-         set
-         {
-            appSettings.tmlpDontAskAgain = value;
-            appSettings.Save();
-         }
+
+         throw new ArgumentException("Selector must be a property expression.");
       }
    }
 }

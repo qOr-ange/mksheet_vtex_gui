@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Linq.Expressions;
+using System.Windows;
 using ValveSpriteSheetUtil.Util;
 using ValveSpriteSheetUtil.Views;
 using ValveSpriteSheetUtil.Views.UserControls;
@@ -10,10 +11,12 @@ namespace ValveSpriteSheetUtil.Util
    // Height="300"
    internal static class MessageBoxUtils
    {
-      public static bool? ShowSelectPathDialog()
+      public static bool? ShowSelectPathDialog<T>(
+         string message,
+         Expression<Func<AppSettings, T>> dontAskAgainProperty)
       {
          var dialog = new TemplatesFolderDialog();
-         dialog.SetMessage("No path provided for vtexTemplates.json. Do you want to select a custom location?");
+         dialog.SetMessage(message);
 
          bool dontAskAgainClicked = false;
 
@@ -33,7 +36,9 @@ namespace ValveSpriteSheetUtil.Util
 
          dialog.AddButton("Don't ask again", 110, (s, e) =>
          {
-            AppSettingsHelper.DontAskAgain_Templates = true;
+            // Use the generic SetSetting method with the specified type
+            var settingValue = default(T);
+            AppSettingsHelper.SetSetting(dontAskAgainProperty, settingValue);
             dontAskAgainClicked = true;
             window.DialogResult = false;  // To match the original intent of returning false
             window.Close();
@@ -43,6 +48,7 @@ namespace ValveSpriteSheetUtil.Util
 
          return dontAskAgainClicked ? false : window.DialogResult;
       }
+
 
       public static bool? ShowPermissionRequiredDialog()
       {
@@ -69,7 +75,6 @@ namespace ValveSpriteSheetUtil.Util
 
          return dontAskAgainClicked ? false : window.DialogResult;
       }
-
       public static void ShowAccessDeniedDialog()
       {
          var dialog = new TemplatesFolderDialog();
@@ -82,17 +87,9 @@ namespace ValveSpriteSheetUtil.Util
             window.DialogResult = true;
             window.Close();
          });
-         
-         dialog.AddButton("Don't ask again", 110, (s, e) =>
-         {
-            AppSettingsHelper.DontAskAgain_Templates = true;
-            window.DialogResult = true; 
-            window.Close();
-         });
 
          window.ShowDialog();
       }
-
       public static void ShowErrorDialog(string errorMessage)
       {
          var dialog = new TemplatesFolderDialog();
@@ -102,13 +99,6 @@ namespace ValveSpriteSheetUtil.Util
 
          dialog.AddButton("OK", null, (s, e) =>
          {
-            window.DialogResult = true;
-            window.Close();
-         });
-
-         dialog.AddButton("Don't ask again", 110, (s, e) =>
-         {
-            AppSettingsHelper.DontAskAgain_Templates = true;
             window.DialogResult = true;
             window.Close();
          });

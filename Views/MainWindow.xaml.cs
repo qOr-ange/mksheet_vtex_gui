@@ -7,64 +7,50 @@ namespace ValveSpriteSheetUtil
 {
    public partial class MainWindow : Window
    {
-      AppSettings appSettings = new AppSettings();
       private SpriteSheetManager spriteSheetManager;
-
       public MainWindow()
       {
          Thread.Sleep(100);
          Console.Title = "Debug Console";
+         Console.OutputEncoding = System.Text.Encoding.Unicode;
          InitializeComponent();
          InitializeSpriteSheetManager();
+         DimmerOverlay.Visibility = Visibility.Hidden;
       }
 
       private void InitializeSpriteSheetManager()
       {
-         string tf2Folder = appSettings.TeamFortressFolder;
-         string frameFolder = appSettings.FrameFolder;
-         spriteSheetManager = new SpriteSheetManager(tf2Folder, frameFolder);
+         spriteSheetManager = new SpriteSheetManager();
 
-         tf2FolderTextBox.Text = tf2Folder;
-         frameTextBox.Text = frameFolder;
-         prefixTextBox.Text = appSettings.Prefix;
-         vtfNameTextBox.Text = appSettings.FileName;
-
-
+         tf2FolderTextBox.Text = AppSettingsHelper.GetSetting(x => x.TeamFortressFolder);
+         frameTextBox.Text = AppSettingsHelper.GetSetting(x => x.FrameFolder);
+         prefixTextBox.Text = AppSettingsHelper.GetSetting(x => x.Prefix);
+         vtfNameTextBox.Text = AppSettingsHelper.GetSetting(x => x.FileName);
       }
       private void SelectTf2Folder_Click(object sender, RoutedEventArgs e)
       {
-         string selectedPath = GetFolderHelper.OpenFolderDialog();
+         string selectedPath = IOHelper.OpenFolderDialog();
          if (!string.IsNullOrEmpty(selectedPath))
          {
-            spriteSheetManager.tf2Folder = selectedPath;
-            appSettings.TeamFortressFolder = selectedPath;
-            appSettings.Save();
+            AppSettingsHelper.SetSetting(x => x.TeamFortressFolder, selectedPath);
             tf2FolderTextBox.Text = selectedPath;
          }
       }
       private void SelectFrameFolder_Click(object sender, RoutedEventArgs e)
       {
-         string selectedPath = GetFolderHelper.OpenFolderDialog();
+         string selectedPath = IOHelper.OpenFolderDialog();
          if (!string.IsNullOrEmpty(selectedPath))
          {
-            spriteSheetManager.frameFolder = selectedPath;
-            appSettings.FrameFolder = selectedPath;
-            appSettings.Save();
+            AppSettingsHelper.SetSetting(x => x.FrameFolder, selectedPath);
             frameTextBox.Text = selectedPath;
          }
       }
       
-      private void Tf2FolderTextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
-      {
-         spriteSheetManager.tf2Folder = tf2FolderTextBox.Text;
-         appSettings.TeamFortressFolder = tf2FolderTextBox.Text;
-         appSettings.Save();
+      private void Tf2FolderTextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e) {
+         AppSettingsHelper.SetSetting(x => x.TeamFortressFolder, tf2FolderTextBox.Text);
       }
-      private void FrameTextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
-      {
-         spriteSheetManager.frameFolder = frameTextBox.Text;
-         appSettings.FrameFolder = frameTextBox.Text;
-         appSettings.Save();
+      private void FrameTextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e) {
+         AppSettingsHelper.SetSetting(x => x.FrameFolder, frameTextBox.Text);
       }
       private void CreateMKSFile_Click(object sender, RoutedEventArgs e)
       {
@@ -75,12 +61,13 @@ namespace ValveSpriteSheetUtil
 
          string result = spriteSheetManager.CreateMKSFile(prefix, fileName, splitSequences, loop);
          CreateVTFButton.IsEnabled = true;
-         Console.WriteLine(result);
+         OpenMKSButton.IsEnabled = true;
+         ConsoleLog.WriteLine(result, Status.Info);
       }
       private void CreateVTFFile_Click(object sender, RoutedEventArgs e)
       {
          spriteSheetManager.fileName = vtfNameTextBox.Text;
-         string result = spriteSheetManager.CreateVTFFile(appSettings.VTEXConfig);
+         string result = spriteSheetManager.CreateVTFFile();
          Console.WriteLine(result);
       }
       private void ConvertPNG_Click(object sender, RoutedEventArgs e)
@@ -101,17 +88,15 @@ namespace ValveSpriteSheetUtil
       }
       private void PrefixTextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
       {
-         appSettings.Prefix = prefixTextBox.Text;
-         appSettings.Save();
          prefixTextBox.Text = CleanFileName(prefixTextBox.Text);
          prefixTextBox.SelectionStart = prefixTextBox.Text.Length;
+         AppSettingsHelper.SetSetting(x => x.Prefix, prefixTextBox.Text);
       }
       private void NameTextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
       {
-         appSettings.FileName = vtfNameTextBox.Text;
-         appSettings.Save();
          vtfNameTextBox.Text = CleanFileName(vtfNameTextBox.Text);
          vtfNameTextBox.SelectionStart = vtfNameTextBox.Text.Length;
+         AppSettingsHelper.SetSetting(x => x.FileName, vtfNameTextBox.Text);
       }
       public string CleanFileName(string name)
       {
@@ -119,13 +104,27 @@ namespace ValveSpriteSheetUtil
       }
       private void OpenVtexConfig_Click(object sender, RoutedEventArgs e)
       {
-         var vtexConfigWindow = new VTEXConfigWindow(appSettings.VTEXConfig, appSettings.VTEXTemplates);
-
+         var vtexConfigWindow = new VTEXConfigWindow();
          if (vtexConfigWindow.ShowDialog() == true)
          {
-            appSettings.VTEXConfig = vtexConfigWindow.GetTextBoxContent();
-            appSettings.Save(); 
          }
+      }
+      private void ToggleDimmerOverlay()
+      {
+         if (DimmerOverlay.Visibility == Visibility.Hidden)
+         {
+            DimmerOverlay.Visibility = Visibility.Visible;
+         }
+         else
+         {
+            DimmerOverlay.Visibility = Visibility.Hidden;
+         }
+      }
+      private void OpenMKSButton_Click(object sender, RoutedEventArgs e)
+      {
+         ToggleDimmerOverlay();
+         spriteSheetManager.OpenMKSFileForEditing();
+         ToggleDimmerOverlay();
       }
    }
 }

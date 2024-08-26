@@ -7,8 +7,13 @@ using System.Threading.Tasks;
 
 namespace ValveSpriteSheetUtil.Util
 {
-   public static class GetFolderHelper
+   public static class IOHelper
    {
+      public enum FilterType
+      {
+         ExecutableFiles,
+      }
+
       public static string OpenFolderDialog()
       {
          var folderDialog = new OpenFolderDialog
@@ -21,6 +26,34 @@ namespace ValveSpriteSheetUtil.Util
          if (folderDialog.ShowDialog() == true)
          {
             var selectedPath = folderDialog.FolderName;
+            return selectedPath;
+         }
+
+         return null;
+      }
+
+
+      private static string GetFilterString(FilterType filter)
+      {
+         return filter switch
+         {
+            FilterType.ExecutableFiles => "Executable Files (*.exe)|*.exe",
+            _ => "All Files (*.*)|*.*",
+         };
+      }
+      public static string OpenFileDialog(FilterType filter)
+      {
+         var folderDialog = new OpenFileDialog
+         {
+            Title = "Select a file.",
+            Filter = GetFilterString(filter),
+            ValidateNames = true,
+            AddToRecent = true,
+         };
+
+         if (folderDialog.ShowDialog() == true)
+         {
+            var selectedPath = folderDialog.FileName;
             return selectedPath;
          }
 

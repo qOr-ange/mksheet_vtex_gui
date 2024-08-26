@@ -32,9 +32,13 @@
 
   <ItemGroup>
     <None Update="AppSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>AppSettings.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Util\NewFolder\" />
   </ItemGroup>
 
 </Project>

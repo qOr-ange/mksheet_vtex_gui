@@ -1,6 +1,11 @@
 ﻿using Microsoft.Win32;
+using System.Diagnostics;
+using System.IO;
+using System.Reflection;
+using System.Text;
 using System.Windows;
 using ValveSpriteSheetUtil.Util;
+using ValveSpriteSheetUtil.Views;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace ValveSpriteSheetUtil
@@ -20,8 +25,6 @@ namespace ValveSpriteSheetUtil
          this.Closing += (sender, e) =>
             AppSettingsHelper.SaveSettings(); 
       }
-
-
 
       private void InitializeSpriteSheetManager()
       {
@@ -50,7 +53,6 @@ namespace ValveSpriteSheetUtil
             frameTextBox.Text = selectedPath;
          }
       }
-      
       private void Tf2FolderTextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e) {
          AppSettingsHelper.SetSetting(x => x.TeamFortressFolder, tf2FolderTextBox.Text);
       }
@@ -129,14 +131,50 @@ namespace ValveSpriteSheetUtil
          DimmerOverlay.Visibility = (DimmerOverlay.Visibility == Visibility.Hidden) 
          ? Visibility.Visible : Visibility.Hidden;
       
-      private async void OpenMKSButton_Click(object sender, RoutedEventArgs e)
+      private void OpenMKSButton_Click(object sender, RoutedEventArgs e)
       {
          ToggleDimmerOverlay();
-         await Task.Run(() =>
-         {
-            spriteSheetManager.OpenMKSFileForEditing();
-         });
+         spriteSheetManager.OpenMKSFileForEditing();
          ToggleDimmerOverlay();
+      }
+
+      private void SettingsButton_Click(object sender, RoutedEventArgs e)
+      {
+         var settings = new SettingsWindow();
+         if (settings.ShowDialog() == true)
+         {
+         }
+      }
+
+      private void HelpButton_Click(object sender, RoutedEventArgs e)
+      {
+         var assembly = Assembly.GetExecutingAssembly();
+         var resourceName = "ValveSpriteSheetUtil.Views.Help.Help.html"; // Adjust namespace and filename as needed
+
+         try
+         {
+            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+            using (StreamReader reader = new StreamReader(stream))
+            {
+               string htmlContent = reader.ReadToEnd();
+
+               string tempFilePath = Path.GetTempFileName() + ".html";
+               File.WriteAllText(tempFilePath, htmlContent);
+
+               ProcessStartInfo startInfo = new ProcessStartInfo(tempFilePath)
+               {
+                  UseShellExecute = true
+               };
+               Process.Start(startInfo);
+
+               Thread.Sleep(100); // need to let browser load the file before removing.
+               File.Delete(tempFilePath);
+            }
+         }
+         catch (Exception ex)
+         {
+            MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+         }
       }
    }
 }

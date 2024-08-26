@@ -13,7 +13,6 @@ namespace ValveSpriteSheetUtil
    {
       public string fileName { get; set; }
       public string mksFile { get; set; }
-
       private List<string> frames {  get; set; } = new List<string>();
 
       public SpriteSheetManager() 
@@ -21,7 +20,6 @@ namespace ValveSpriteSheetUtil
          
       }
       public string CleanFileName(string name) => string.Concat(name.Split(Path.GetInvalidFileNameChars()));
-      
       public void CreateMKSFile(string prefix, string fileName, bool splitSequences, bool loop)
       {
          using (MKSFileHandler mks = new MKSFileHandler()) {
@@ -29,7 +27,6 @@ namespace ValveSpriteSheetUtil
          }
          ConsoleLog.WriteLine($"Done! {fileName}.mks created. Make any changes now.", Status.Success);
       }
-
       public void OpenMKSFileForEditing()
       {
          if (string.IsNullOrEmpty(AppSettingsHelper.GetSetting(x => x.TextEditorPath)) && AppSettingsHelper.GetSetting(x => x.UseDefTextEditor) == false)
@@ -157,8 +154,6 @@ namespace ValveSpriteSheetUtil
 
          return null;
       }
-
-
       public void CreateVTFFile()
       {
          if (frames == null || frames.Count == 0 || string.IsNullOrEmpty(mksFile))
@@ -328,7 +323,6 @@ namespace ValveSpriteSheetUtil
 
          OpenOutputFolder(outputFolder);
       }
-
       private void OpenOutputFolder(string outputFolder)
       {
          Process p = new Process()
@@ -342,8 +336,6 @@ namespace ValveSpriteSheetUtil
          };
          p.Start();
       }
-
-
       public void ConvertPngToTga(string prefix)
       {
          string[] files = Directory.GetFiles(AppSettingsHelper.GetSetting(x => x.FrameFolder));

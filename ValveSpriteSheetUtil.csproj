@@ -11,10 +11,12 @@
 
   <ItemGroup>
     <None Remove="icon.ico" />
+    <None Remove="Views\Help\Help.html" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="img\icon.ico" />
+    <EmbeddedResource Include="Views\Help\Help.html" />
   </ItemGroup>
 
   <ItemGroup>

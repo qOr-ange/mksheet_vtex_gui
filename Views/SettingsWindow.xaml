@@ -1,0 +1,167 @@
+﻿<Window
+   x:Class="ValveSpriteSheetUtil.Views.SettingsWindow"
+   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+   Title="SettingsWindow"
+   Width="650"
+   Height="197"
+   Background="{DynamicResource Brush.BG.Dark}"
+   BorderBrush="{DynamicResource Brush.BG.Lighter}"
+   ResizeMode="NoResize"
+   WindowStartupLocation="CenterScreen"
+   mc:Ignorable="d">
+
+   <Grid Margin="10">
+      <Grid.RowDefinitions>
+         <RowDefinition Height="10*" />
+         <RowDefinition Height="10*" />
+         <RowDefinition Height="10*" />
+         <RowDefinition Height="10*" />
+         <RowDefinition Height="10*" />
+      </Grid.RowDefinitions>
+      <Grid.ColumnDefinitions>
+         <ColumnDefinition Width="Auto" MinWidth="139" />
+         <ColumnDefinition />
+      </Grid.ColumnDefinitions>
+
+      <!--  VTEX Templates  -->
+      <Label
+         Grid.Column="0"
+         Height="26"
+         VerticalAlignment="Center"
+         Content="VTEX Templates:">
+         <Label.Foreground>
+            <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+         </Label.Foreground>
+      </Label>
+      <TextBox
+         x:Name="VTEXTemplatesPathTextBox"
+         Grid.Row="0"
+         Grid.Column="1"
+         Margin="5,5,5,5">
+         <TextBox.Foreground>
+            <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+         </TextBox.Foreground>
+         <TextBox.BorderBrush>
+            <SolidColorBrush Color="{DynamicResource BG.Lighter}" />
+         </TextBox.BorderBrush>
+         <TextBox.Background>
+            <SolidColorBrush Color="{DynamicResource BG.Light}" />
+         </TextBox.Background>
+      </TextBox>
+
+      <!--  Text Editor Path  -->
+      <Label
+         Grid.Row="1"
+         Grid.Column="0"
+         Height="26"
+         VerticalAlignment="Center"
+         Content="Text Editor Path:">
+         <Label.Foreground>
+            <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+         </Label.Foreground>
+      </Label>
+      <TextBox
+         x:Name="TextEditorPathTextBox"
+         Grid.Row="1"
+         Grid.Column="1"
+         Margin="5,5,5,5">
+         <TextBox.Foreground>
+            <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+         </TextBox.Foreground>
+         <TextBox.BorderBrush>
+            <SolidColorBrush Color="{DynamicResource BG.Lighter}" />
+         </TextBox.BorderBrush>
+         <TextBox.Background>
+            <SolidColorBrush Color="{DynamicResource BG.Light}" />
+         </TextBox.Background>
+      </TextBox>
+      <CheckBox
+         x:Name="TMPLDontShowAgainCheckBox"
+         Grid.Row="2"
+         Grid.RowSpan="1"
+         Grid.Column="0"
+         Grid.ColumnSpan="2"
+         Margin="5,0,0,0"
+         HorizontalAlignment="Left"
+         Content=" ( Templates Path ) Don't Show Again"
+         Style="{DynamicResource GeneralCheckBoxStyle}">
+         <CheckBox.BorderBrush>
+            <SolidColorBrush Color="{DynamicResource BG.Lighter}" />
+         </CheckBox.BorderBrush>
+         <CheckBox.Background>
+            <SolidColorBrush Color="{DynamicResource BG.Light}" />
+         </CheckBox.Background>
+         <CheckBox.Foreground>
+            <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+         </CheckBox.Foreground>
+      </CheckBox>
+
+      <!--  Use Default Text Editor  -->
+      <CheckBox
+         x:Name="UseDefaulttextEditorCheckBox"
+         Grid.Row="3"
+         Grid.ColumnSpan="2"
+         Width="136"
+         Margin="5,5,0,5"
+         HorizontalAlignment="Left"
+         Content=" Use Default Texteditor"
+         Style="{DynamicResource GeneralCheckBoxStyle}">
+         <CheckBox.Background>
+            <SolidColorBrush Color="{DynamicResource BG.Light}" />
+         </CheckBox.Background>
+         <CheckBox.BorderBrush>
+            <SolidColorBrush Color="{DynamicResource BG.Lighter}" />
+         </CheckBox.BorderBrush>
+         <CheckBox.Foreground>
+            <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+         </CheckBox.Foreground>
+      </CheckBox>
+
+      <!--  Buttons  -->
+      <StackPanel
+         Grid.Row="4"
+         Grid.Column="1"
+         Width="170"
+         Margin="0,0,5,0"
+         HorizontalAlignment="Right"
+         Orientation="Horizontal">
+         <Button
+            x:Name="CancelButton"
+            Width="75"
+            Margin="5"
+            Click="CancelButton_Click"
+            Content="Cancel"
+            Style="{DynamicResource GeneralButtonStyle}">
+            <Button.Foreground>
+               <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+            </Button.Foreground>
+            <Button.BorderBrush>
+               <SolidColorBrush Color="{DynamicResource BG.Lighter}" />
+            </Button.BorderBrush>
+            <Button.Background>
+               <SolidColorBrush Color="{DynamicResource BG.Light}" />
+            </Button.Background>
+         </Button>
+         <Button
+            x:Name="SaveButton"
+            Width="75"
+            Margin="5"
+            Click="SaveButton_Click"
+            Content="Save"
+            Style="{DynamicResource GeneralButtonStyle}">
+            <Button.Foreground>
+               <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+            </Button.Foreground>
+            <Button.BorderBrush>
+               <SolidColorBrush Color="{DynamicResource BG.Lighter}" />
+            </Button.BorderBrush>
+            <Button.Background>
+               <SolidColorBrush Color="{DynamicResource BG.Light}" />
+            </Button.Background>
+         </Button>
+      </StackPanel>
+   </Grid>
+</Window>

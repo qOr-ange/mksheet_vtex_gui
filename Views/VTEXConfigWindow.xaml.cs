@@ -80,6 +80,7 @@ namespace ValveSpriteSheetUtil
          AutocompletePopup.IsOpen = false;
          InitializeTemplateComboBox();
       }
+      private void OnWindowLoaded(object sender, RoutedEventArgs e) => LoadTextBoxContent();
 
       private void InitializeTemplateComboBox()
       {
@@ -131,7 +132,7 @@ namespace ValveSpriteSheetUtil
             MessageBox.Show($"Invalid input: {errorMessage}", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Error);
          }
       }
-      private void OnWindowLoaded(object sender, RoutedEventArgs e) => LoadTextBoxContent();
+
       private void LoadTextBoxContent() => InputTextBox.Text = AppSettingsHelper.GetSetting(x => x.VTEXConfig);
       public string GetTextBoxContent() => InputTextBox.Text;
       private void OnTextBoxTextChanged(object sender, TextChangedEventArgs e) => UpdateAutocomplete();
@@ -244,23 +245,14 @@ namespace ValveSpriteSheetUtil
       #region Validation Methods
 
       private static bool ValidateBooleanFlag(string value) => value == "1" || value == "0";
-
       private static bool ValidateAlphaThreshold(string value) => float.TryParse(value, out float result) && result is >= 0f and <= 1f;
-
       private static bool ValidateNonNegativeFloat(string value) => float.TryParse(value, out float result) && result >= 0f;
-
       private static bool ValidatePositiveInteger(string value) => int.TryParse(value, out int result) && result > 0;
-
       private static bool ValidateNonNegativeInteger(string value) => int.TryParse(value, out int result) && result >= 0;
-
       private static bool ValidateMipBlend(string value) => value == "0" || value == "1";
-
       private static bool ValidateNumChannels(string value) => int.TryParse(value, out int result) && result is >= 1 and <= 4;
-
       private static bool ValidatePowerOfTwo(string value) => int.TryParse(value, out int result) && result is > 0 && (result & (result - 1)) == 0;
 
       #endregion
-
-      
    }
 }

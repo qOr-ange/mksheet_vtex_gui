@@ -128,7 +128,7 @@
       </Button>
 
       <!--  Frame filename prefix  -->
-      <Label Grid.Row="2" Content="Frame filename prefix:">
+      <Label Grid.Row="2" Content="Input filename prefix:">
          <Label.Foreground>
             <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
          </Label.Foreground>
@@ -156,7 +156,7 @@
       </TextBox>
 
       <!--  Desired sprite name  -->
-      <Label Grid.Row="3" Content="Desired sprite name:">
+      <Label Grid.Row="3" Content="Output filename:">
          <Label.Foreground>
             <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
          </Label.Foreground>

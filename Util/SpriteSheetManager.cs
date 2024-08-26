@@ -20,18 +20,14 @@ namespace ValveSpriteSheetUtil
       {
          
       }
-      public string CleanFileName(string name)
+      public string CleanFileName(string name) => string.Concat(name.Split(Path.GetInvalidFileNameChars()));
+      
+      public void CreateMKSFile(string prefix, string fileName, bool splitSequences, bool loop)
       {
-         return string.Concat(name.Split(Path.GetInvalidFileNameChars()));
-      }
-      public string CreateMKSFile(string prefix, string fileName, bool splitSequences, bool loop)
-      {
-         using (MKSFileHandler handler = new MKSFileHandler())
-         {
-            (mksFile, frames) = handler.CreateMKSFile(prefix, fileName, splitSequences, loop);
+         using (MKSFileHandler mks = new MKSFileHandler()) {
+            (mksFile, frames) = mks.CreateMKSFile(prefix, fileName, splitSequences, loop);
          }
-
-         return $"Done! {fileName}.mks created. Make any changes now.";
+         ConsoleLog.WriteLine($"Done! {fileName}.mks created. Make any changes now.", Status.Success);
       }
 
       public void OpenMKSFileForEditing()
@@ -84,9 +80,9 @@ namespace ValveSpriteSheetUtil
             process.WaitForExit();
 
             string postEditValidationResult = ValidateMKSFile();
-            if (!string.IsNullOrEmpty(postEditValidationResult))
-            {
-               Console.WriteLine($"Validation failed: {postEditValidationResult}");
+            if (postEditValidationResult != null) 
+            { 
+               ConsoleLog.WriteLine(postEditValidationResult, Status.Error);
             }
          }
          catch (Exception ex)
@@ -94,25 +90,96 @@ namespace ValveSpriteSheetUtil
             Console.WriteLine($"Couldn't open {mksFile} in text editor. Error: {ex.Message}");
          }
       }
-
-
       private string ValidateMKSFile()
       {
          if (!File.Exists(mksFile))
             return "Error: The .mks file does not exist after editing.";
 
-         // Add more validation checks here if needed.
-         // Example: Validate the content of the .mks file
+         var lines = File.ReadAllLines(mksFile);
+
+         bool inSequence = false;
+         int sequenceCount = 0;
+
+         foreach (var line in lines)
+         {
+            var trimmedLine = line.Trim();
+
+            if (string.IsNullOrEmpty(trimmedLine) || trimmedLine.StartsWith("//"))
+               continue;
+
+            if (trimmedLine.StartsWith("sequence"))
+            {
+               inSequence = true;
+               sequenceCount++;
+               continue;
+            }
+
+            if (trimmedLine.StartsWith("//&"))
+            {
+               ConsoleLog.WriteLine(trimmedLine.Substring(3).Trim(), Status.Info);
+               continue;
+            }
+
+            if (inSequence && trimmedLine.StartsWith("frame"))
+            {
+               // Example: frame mymaterial1.tga 1
+               var frameParts = trimmedLine.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+               if (frameParts.Length < 3)
+                  return "Error: Invalid frame definition in sequence " + sequenceCount;
+               continue;
+            }
+
+            if (inSequence && trimmedLine.StartsWith("loop", StringComparison.OrdinalIgnoreCase))
+            {
+               continue;
+            }
+
+            if (trimmedLine.StartsWith("sequence") && inSequence)
+            {
+               inSequence = false;
+               continue;
+            }
+
+            if (trimmedLine.StartsWith("packmode"))
+            {
+               var validModes = new[] { "rgb", "rgb+a" };
+               var mode = trimmedLine.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
+               if (!validModes.Contains(mode))
+                  return "Error: Invalid packmode defined.";
+               continue;
+            }
+
+            return $"Error: Unexpected line format: {trimmedLine}";
+         }
+
+         if (sequenceCount == 0)
+            return "Error: No sequence defined in the .mks file.";
 
          return null;
       }
 
 
-      public string CreateVTFFile()
+      public void CreateVTFFile()
       {
-            ConsoleLog.WriteLine($"Frames: {frames.Count}", Status.Info);
          if (frames == null || frames.Count == 0 || string.IsNullOrEmpty(mksFile))
-            return "MKS file or frames are not properly initialized.";
+         {
+            ConsoleLog.WriteLine($"Oops, Something went wrong!", Status.Error);
+            if (frames == null)
+            {
+               ConsoleLog.WriteLine($"Frames were null.", Status.Warning);
+            }
+            if (frames.Count == 0)
+            {
+               ConsoleLog.WriteLine($"Frames count is 0", Status.Warning);
+            }
+            if (string.IsNullOrEmpty(mksFile))
+            {
+               ConsoleLog.WriteLine($"{fileName}.mks was empty.", Status.Warning);
+            }
+            return;
+         }
+
+         ConsoleLog.WriteLine($"Frames: {frames.Count}", Status.Info);
 
          string tf2Bin = Path.Combine(AppSettingsHelper.GetSetting(x => x.TeamFortressFolder), "bin", "x64");
 
@@ -173,14 +240,14 @@ namespace ValveSpriteSheetUtil
             File.Move(tf2Bin +"\\"+ fileName + ".tga", AppSettingsHelper.GetSetting(x => x.TeamFortressFolder) + "\\tf\\materialsrc\\" + fileName + ".tga");
 
             ConsoleLog.WriteLine("Building VTF file, please wait, this may take a while...", Status.Info);
-            return CreateVTFFromSHT(tf2Bin, AppSettingsHelper.GetSetting(x => x.VTEXConfig));
+            CreateVTFFromSHT(tf2Bin, AppSettingsHelper.GetSetting(x => x.VTEXConfig));
          }
          catch (Exception ex)
          {
-            return ex.Message;
+            ConsoleLog.WriteLine(ex.Message, Status.Error);
          }
       }
-      private string CreateVTFFromSHT(string tf2Bin, string vtexParams)
+      private void CreateVTFFromSHT(string tf2Bin, string vtexParams)
       {
          string vtfLocation = Path.Combine(AppSettingsHelper.GetSetting(x => x.FrameFolder), $"{fileName}.vtf");
          if (File.Exists(vtfLocation))
@@ -215,9 +282,9 @@ namespace ValveSpriteSheetUtil
          }
          File.Move(Path.Combine(AppSettingsHelper.GetSetting(x => x.TeamFortressFolder), "tf", "materials", $"{fileName}.vtf"), vtfLocation);
 
-         return $"Done! {fileName}.vtf created.";
+         ConsoleLog.WriteLine($"Done! {fileName}.vtf created.", Status.Success);
       }
-      public string ConvertPngToTga(string prefix)
+      public void ConvertPngToTga(string prefix)
       {
          string[] files = Directory.GetFiles(AppSettingsHelper.GetSetting(x => x.FrameFolder));
 
@@ -232,9 +299,9 @@ namespace ValveSpriteSheetUtil
             }
          }
 
-         return "Conversion complete.";
+         ConsoleLog.WriteLine("Conversion complete.", Status.Success);
       }
-      public string CreateVMTFile(string fileName, bool blendFrames, bool depthBlend, bool additive)
+      public void CreateVMTFile(string fileName, bool blendFrames, bool depthBlend, bool additive)
       {
          var vmtPath = Path.Combine(AppSettingsHelper.GetSetting(x => x.FrameFolder), $"{fileName}.vmt");
 
@@ -245,7 +312,7 @@ namespace ValveSpriteSheetUtil
          fs.Write(Encoding.UTF8.GetBytes($"\t\"$depthblend\" {(depthBlend ? "1" : "0")}\r\n"));
          fs.Write(Encoding.UTF8.GetBytes($"\t\"$additive\" {(additive ? "1" : "0")}\r\n}}"));
 
-         return $"Done! {fileName}.vmt created.";
+         ConsoleLog.WriteLine($"Done! {fileName}.vmt created.", Status.Success);
       }
    }
 }

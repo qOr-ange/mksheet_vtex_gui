@@ -19,7 +19,11 @@ namespace ValveSpriteSheetUtil.Util
       {
          var property = GetProperty(selector);
          property.SetValue(appSettings, value);
-         appSettings.Save();
+      }
+
+      public static void SaveSettings() { 
+         appSettings.Save(); 
+         ConsoleLog.WriteLine("Settings saved.", Status.Success);
       }
 
       private static PropertyInfo GetProperty<T>(Expression<Func<AppSettings, T>> selector)

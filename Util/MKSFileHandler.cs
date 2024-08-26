@@ -78,7 +78,6 @@ namespace ValveSpriteSheetUtil.Util
       }
 
 
-
       private void SortFramesByNumericSuffix(List<string> frames)
       {
          frames.Sort((x, y) =>

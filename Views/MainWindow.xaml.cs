@@ -16,7 +16,12 @@ namespace ValveSpriteSheetUtil
          InitializeComponent();
          InitializeSpriteSheetManager();
          DimmerOverlay.Visibility = Visibility.Hidden;
+
+         this.Closing += (sender, e) =>
+            AppSettingsHelper.SaveSettings(); 
       }
+
+
 
       private void InitializeSpriteSheetManager()
       {
@@ -59,33 +64,45 @@ namespace ValveSpriteSheetUtil
          bool splitSequences = (bool)splitCheckBox.IsChecked;
          bool loop = (bool)loopCheckBox.IsChecked;
 
-         string result = spriteSheetManager.CreateMKSFile(prefix, fileName, splitSequences, loop);
-         CreateVTFButton.IsEnabled = true;
-         OpenMKSButton.IsEnabled = true;
-         ConsoleLog.WriteLine(result, Status.Info);
-      }
-      private void CreateVTFFile_Click(object sender, RoutedEventArgs e)
-      {
-         spriteSheetManager.fileName = vtfNameTextBox.Text;
-         string result = spriteSheetManager.CreateVTFFile();
-         Console.WriteLine(result);
-      }
-      private void ConvertPNG_Click(object sender, RoutedEventArgs e)
-      {
-         string prefix = prefixTextBox.Text;
-         string result = spriteSheetManager.ConvertPngToTga(prefix);
-         Console.WriteLine(result);
-      }
-      private void CreateVMTFile_Click(object sender, RoutedEventArgs e)
-      {
-         string fileName = spriteSheetManager.CleanFileName(vtfNameTextBox.Text);
-         bool blendFrames = (bool)blendFramesCheckBox.IsChecked;
-         bool depthBlend = (bool)depthBlendCheckBox.IsChecked;
-         bool additive = (bool)additiveCheckBox.IsChecked;
+         if (!string.IsNullOrEmpty(prefix) && 
+            !string.IsNullOrEmpty(fileName)) 
+         { 
+            spriteSheetManager.CreateMKSFile(prefix, fileName, splitSequences, loop);
+            CreateVTFButton.IsEnabled = true;
+            OpenMKSButton.IsEnabled = true;
+         }
+         else
+         {
+            ConsoleLog.WriteLine("Prefix and/or output Filename not set", Status.Warning);
+         }
 
-         string result = spriteSheetManager.CreateVMTFile(fileName, blendFrames, depthBlend, additive);
-         Console.WriteLine(result);
       }
+      private async void CreateVTFFile_Click(object sender, RoutedEventArgs e)
+      {
+         ToggleDimmerOverlay();
+         CreateVTFButton.IsEnabled = false;
+         OpenMKSButton.IsEnabled = false;
+         spriteSheetManager.fileName = vtfNameTextBox.Text;
+
+         await Task.Run(() =>
+         {
+            spriteSheetManager.CreateVTFFile();
+         });
+
+         ToggleDimmerOverlay();
+      }
+
+      private void ConvertPNG_Click(object sender, RoutedEventArgs e) 
+         => spriteSheetManager.ConvertPngToTga(prefixTextBox.Text);
+
+      private void CreateVMTFile_Click(object sender, RoutedEventArgs e) => 
+         spriteSheetManager.CreateVMTFile(
+            spriteSheetManager.CleanFileName(vtfNameTextBox.Text),
+            (bool)blendFramesCheckBox.IsChecked,
+            (bool)depthBlendCheckBox.IsChecked,
+            (bool)additiveCheckBox.IsChecked
+         );
+      
       private void PrefixTextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
       {
          prefixTextBox.Text = CleanFileName(prefixTextBox.Text);
@@ -98,10 +115,9 @@ namespace ValveSpriteSheetUtil
          vtfNameTextBox.SelectionStart = vtfNameTextBox.Text.Length;
          AppSettingsHelper.SetSetting(x => x.FileName, vtfNameTextBox.Text);
       }
-      public string CleanFileName(string name)
-      {
-         return string.Concat(name.Split(System.IO.Path.GetInvalidFileNameChars()));
-      }
+      public string CleanFileName(string name) => 
+         string.Concat(name.Split(System.IO.Path.GetInvalidFileNameChars()));
+      
       private void OpenVtexConfig_Click(object sender, RoutedEventArgs e)
       {
          var vtexConfigWindow = new VTEXConfigWindow();
@@ -109,21 +125,17 @@ namespace ValveSpriteSheetUtil
          {
          }
       }
-      private void ToggleDimmerOverlay()
-      {
-         if (DimmerOverlay.Visibility == Visibility.Hidden)
-         {
-            DimmerOverlay.Visibility = Visibility.Visible;
-         }
-         else
-         {
-            DimmerOverlay.Visibility = Visibility.Hidden;
-         }
-      }
-      private void OpenMKSButton_Click(object sender, RoutedEventArgs e)
+      private void ToggleDimmerOverlay() => 
+         DimmerOverlay.Visibility = (DimmerOverlay.Visibility == Visibility.Hidden) 
+         ? Visibility.Visible : Visibility.Hidden;
+      
+      private async void OpenMKSButton_Click(object sender, RoutedEventArgs e)
       {
          ToggleDimmerOverlay();
-         spriteSheetManager.OpenMKSFileForEditing();
+         await Task.Run(() =>
+         {
+            spriteSheetManager.OpenMKSFileForEditing();
+         });
          ToggleDimmerOverlay();
       }
    }

@@ -146,35 +146,59 @@ namespace ValveSpriteSheetUtil
          }
       }
 
-      private void HelpButton_Click(object sender, RoutedEventArgs e)
+      private async void HelpButton_Click(object sender, RoutedEventArgs e)
       {
          var assembly = Assembly.GetExecutingAssembly();
-         var resourceName = "ValveSpriteSheetUtil.Views.Help.Help.html"; // Adjust namespace and filename as needed
+         var resourceName = "ValveSpriteSheetUtil.Views.Help.Help.html";
+         var imageResourceName = "ValveSpriteSheetUtil.Views.Help.logo.png";
 
          try
          {
+            string htmlContent;
             using (Stream stream = assembly.GetManifestResourceStream(resourceName))
             using (StreamReader reader = new StreamReader(stream))
             {
-               string htmlContent = reader.ReadToEnd();
-
-               string tempFilePath = Path.GetTempFileName() + ".html";
-               File.WriteAllText(tempFilePath, htmlContent);
-
-               ProcessStartInfo startInfo = new ProcessStartInfo(tempFilePath)
-               {
-                  UseShellExecute = true
-               };
-               Process.Start(startInfo);
-
-               Thread.Sleep(100); // need to let browser load the file before removing.
-               File.Delete(tempFilePath);
+               htmlContent = reader.ReadToEnd();
             }
+
+            string tempFolderPath = Path.GetTempPath();
+            string tempHtmlPath = Path.Combine(tempFolderPath, "Help.html");
+            string tempImagePath = Path.Combine(tempFolderPath, "logo.png");
+
+            using (Stream imageStream = assembly.GetManifestResourceStream(imageResourceName))
+            using (FileStream fileStream = new FileStream(tempImagePath, FileMode.Create, FileAccess.Write))
+            {
+               imageStream.CopyTo(fileStream);
+            }
+
+            string updatedHtmlContent = htmlContent.Replace("path-to-your-image/logo.png", tempImagePath);
+            File.WriteAllText(tempHtmlPath, updatedHtmlContent);
+
+            await Task.Run(() =>
+            {
+               Process helpInfo = new Process()
+               {
+                  StartInfo = new ProcessStartInfo(tempHtmlPath)
+                  {
+                     UseShellExecute = true
+
+                  }
+               };
+               helpInfo.Start();
+               helpInfo.WaitForExit();
+               helpInfo.Exited += (sender, e) =>
+               {
+                  File.Delete(tempHtmlPath);
+                  File.Delete(tempImagePath);
+               };
+            });
+            
          }
          catch (Exception ex)
          {
             MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
          }
       }
+
    }
 }

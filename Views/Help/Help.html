@@ -21,6 +21,17 @@
          border-bottom: 2px solid #9A85C7; /* Subtle border to define the header */
       }
 
+      hr {
+         display: block;
+         margin-top: 0.5em;
+         margin-bottom: 0.5em;
+         margin-left: auto;
+         margin-right: auto;
+         border-style: inset;
+         border-width: 1px;
+         color: #9A85C7;
+      }
+
       h1 {
          color: #15151F; /* Light color for main headings */
          margin-bottom: 10px;
@@ -89,7 +100,7 @@
    <header>
       <h1>Help Documentation</h1>
    </header>
-
+   <br />
    <nav style="display: flex; justify-content: space-between; align-items: flex-start;">
       <div>
          <h2>Table of Contents</h2>
@@ -112,52 +123,72 @@
          <img src="path-to-your-image/logo.png" alt="Logo Image" style="max-width: 550px; height: auto; margin-left: 50px; margin-top: 50px;">
       </div>
    </nav>
-
+   <br />
+   <br />
+   <br />
    <section id="introduction">
       <h2>Introduction</h2>
+      <hr class="dashed">
       <h3>What is this?</h3>
       <p>This utility software is designed to simplify the process of building TGA files into VTF spritesheets for 64-bit Team Fortress 2 (TF2). It utilizes <code>mksheet.exe</code> and <code>vtex.exe</code> found in the <code>bin\x64</code> directory, making the creation of spritesheets for TF2 more accessible.</p>
+      <hr class="dashed">
 
       <h3>Why?</h3>
       <p>As I updated the Transparent Flamethrower Fire mod to x64, I found it bothersome to work with <code>mksheet.exe</code> and <code>vtex.exe</code>. Searching online led me to <a href="https://github.com/RonSkons/mksheet_vtex_gui" target="_blank">this repository</a>, which still uses the original TF2 <code>bin\</code>  tools. I modified the paths to use the 64-bit versions and ported the project to WPF, adding several quality-of-life enhancements.</p>
+      <hr class="dashed">
    </section>
-
+   <br />
+   <br />
+   <br />
    <section id="getting-started">
       <h2>Getting Started</h2>
-
+      <hr class="dashed">
       <h3 id="setup">1. Setup</h3>
       <ol>
          <li>Ensure the Team Fortress 2 folder is set to the game's executable directory.</li>
          <li>Set the "Folder Containing TGA Frames" to the folder containing your frames. PNG files can also be used but you'll need to [Batch convert PNG to TGA], the PNGs transparency will be preserved as the alpha channel in the TGAs.</li>
-         <li>Generally Input TGA files cannot contain spaces; however, they will be automatically renamed and paces replace with <code>_</code> as <code>mksheet.exe</code> does not support filenames with spaces.</li>
+         <li>Generally Input TGA files cannot contain spaces; however, they will be automatically renamed and spaces will be replaced with <code>_</code> (undescores) as <code>mksheet.exe</code> does not support filenames with spaces.</li>
          <li>Specify the "Input Filename Prefix" (e.g., <code>[ frame ]</code>) as the prefix for naming scheme of: <code>frame_[number]</code></li>
          <li>Set the "Output Filename" for the resulting <code>.VTF</code> file.</li>
       </ol>
       <p>Once these steps are completed, you can select additional options like "Multiple Sequences" (for multiple animations requiring manual configuration) or "Loop Animation" (which implies the sequences are looping animations).</p>
       <p>For more information, refer to the <a href="https://developer.valvesoftware.com/wiki/Animated_Particles" target="_blank">Valve Developer Wiki\Animated_Particles</a>.</p>
-
+      <hr class="dashed">
       <h3 id="configuration">2. Configuration</h3>
       <p>After setup, click "Generate MKS File" to create a <code>.mks</code> file in the "Folder Containing TGA Frames". This file can be opened directly by clicking "Open MKS".</p>
       <p>The "Open MKS" button will prompt you to select a text editor. You can choose to use the system's default text editor or manually select one. You also have the option to disable future prompts by selecting "Don't ask again".</p>
       <p>Once the MKS file is configured, click on "VTEX Configuration" to set up the parameters for <code>vtex.exe</code>. (See the <a href="#vtex-config-window">VTEX Configuration Help</a> for more details.)</p>
-
+      <hr class="dashed">
       <h3 id="generation-compiling">3. Generation & Compiling</h3>
       <p>Click "Create VTF" to build the SpriteSheet VTF file. The output will be saved to <code>Folder 'Containing TGA Frames'\[output]\'filename'.vtf</code>, and the output folder will open automatically.</p>
+      <hr class="dashed">
    </section>
-
+   <br />
+   <br />
+   <br />
    <section id="vtex-config-window">
       <h2>VTEX Config Window</h2>
+      <hr class="dashed">
       <p>This window provides a textbox with autofill suggestions and validation to ensure correct parameters. You can save configurations as templates using the dropdown menu in the top right corner.</p>
       <p>For more detailed information on <code>vtex.exe</code> parameters, refer to the <a href="https://developer.valvesoftware.com/wiki/VTEX_(Source)" target="_blank">Valve Developer Wiki\VTEX_(Source)</a>.</p>
    </section>
-
+   <hr class="dashed">
+   <br />
+   <br />
+   <br />
    <section id="faqs">
       <h2>FAQs</h2>
+      <hr class="dashed">
       <p>Currently, there are no frequently asked questions.</p>
    </section>
-
+   <hr class="dashed">
    <section id="contact">
+      <br />
+      <br />
+      <br />
       <h2>Contact</h2>
+      <hr class="dashed">
+
       <p>If you need further assistance, please contact me at:</p>
       <p><a href="https://github.com/Orangeprint-git/mksheet_vtex_gui" target="_blank">GitHub\mksheet_vtex_gui</a></p>
       <p><a href="https://gamebanana.com/tools/17813" target="_blank">GameBanana\mksheet_vtex_gui</a></p>

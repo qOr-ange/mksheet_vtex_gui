@@ -1,9 +1,4 @@
 ﻿using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ValveSpriteSheetUtil.Util
 {
@@ -31,7 +26,6 @@ namespace ValveSpriteSheetUtil.Util
 
          return null;
       }
-
 
       private static string GetFilterString(FilterType filter)
       {

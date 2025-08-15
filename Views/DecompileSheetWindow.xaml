@@ -1,0 +1,199 @@
+﻿<Window
+    x:Class="ValveSpriteSheetUtil.Views.DecompileSheetWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Decompile VTF Sheet"
+    Width="650"
+    Height="185"
+    Background="{DynamicResource Brush.BG.Dark}"
+    BorderBrush="{DynamicResource Brush.BG.Lighter}"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+
+   <Grid Margin="10">
+      <Grid.RowDefinitions>
+         <RowDefinition Height="Auto" />
+         <RowDefinition Height="Auto" />
+         <RowDefinition Height="Auto" />
+         <RowDefinition Height="10*" />
+      </Grid.RowDefinitions>
+      <Grid.ColumnDefinitions>
+         <ColumnDefinition Width="Auto" MinWidth="139" />
+         <ColumnDefinition />
+      </Grid.ColumnDefinitions>
+
+      <!-- VTF File Path -->
+      <Label
+            Grid.Row="0"
+            Grid.Column="0"
+            Height="26"
+            VerticalAlignment="Center"
+            Content="VTF File:">
+         <Label.Foreground>
+            <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+         </Label.Foreground>
+      </Label>
+      <TextBox
+            x:Name="VtfPathTextBox"
+            Grid.Row="0"
+            Grid.Column="1"
+            Margin="5,5,40,5">
+         <TextBox.Foreground>
+            <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+         </TextBox.Foreground>
+         <TextBox.BorderBrush>
+            <SolidColorBrush Color="{DynamicResource BG.Lighter}" />
+         </TextBox.BorderBrush>
+         <TextBox.Background>
+            <SolidColorBrush Color="{DynamicResource BG.Light}" />
+         </TextBox.Background>
+      </TextBox>
+      <Button
+            x:Name="BrowseVtfButton"
+            Grid.Row="0"
+            Grid.Column="2"
+            Width="30"
+            Margin="5"
+            Click="BrowseVtfButton_Click"
+            Content="..."
+            Style="{DynamicResource GeneralButtonStyle}" Height="18" HorizontalAlignment="Right">
+         <Button.Foreground>
+            <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+         </Button.Foreground>
+         <Button.BorderBrush>
+            <SolidColorBrush Color="{DynamicResource BG.Lighter}" />
+         </Button.BorderBrush>
+         <Button.Background>
+            <SolidColorBrush Color="{DynamicResource BG.Light}" />
+         </Button.Background>
+      </Button>
+
+      <!-- Output Directory -->
+      <Label
+            Grid.Row="1"
+            Grid.Column="0"
+            Height="26"
+            VerticalAlignment="Center"
+            Content="Output Directory:">
+         <Label.Foreground>
+            <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+         </Label.Foreground>
+      </Label>
+      
+      <TextBox
+         x:Name="OutputPathTextBox"
+         Grid.Row="1"
+         Grid.Column="1"
+         Margin="5,5,40,5">
+         <TextBox.Foreground>
+            <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+         </TextBox.Foreground>
+         <TextBox.BorderBrush>
+            <SolidColorBrush Color="{DynamicResource BG.Lighter}" />
+         </TextBox.BorderBrush>
+         <TextBox.Background>
+            <SolidColorBrush Color="{DynamicResource BG.Light}" />
+         </TextBox.Background>
+      </TextBox>
+
+      <Button
+            x:Name="BrowseOutputButton"
+            Grid.Row="1"
+            Grid.Column="2"
+            Width="30"
+            Margin="5"
+            Click="BrowseOutputButton_Click"
+            Content="..."
+            Style="{DynamicResource GeneralButtonStyle}" Height="18" HorizontalAlignment="Right">
+         <Button.Foreground>
+            <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+         </Button.Foreground>
+         <Button.BorderBrush>
+            <SolidColorBrush Color="{DynamicResource BG.Lighter}" />
+         </Button.BorderBrush>
+         <Button.Background>
+            <SolidColorBrush Color="{DynamicResource BG.Light}" />
+         </Button.Background>
+      </Button>
+
+      <!-- Output Options -->
+      <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Margin="5,10,5,5" Orientation="Horizontal" VerticalAlignment="Center">
+         <TextBlock Text="Output Format:" VerticalAlignment="Center" Margin="0,0,10,0">
+            <TextBlock.Foreground>
+               <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+            </TextBlock.Foreground>
+         </TextBlock>
+         <RadioButton x:Name="PngRadioButton" Content="PNG" IsChecked="True" Style="{DynamicResource GeneralRadioButtonStyle}" Margin="0,0,10,0" >
+            <RadioButton.Foreground>
+               <SolidColorBrush Color="{DynamicResource Text.Secondary}"/>
+            </RadioButton.Foreground>
+         </RadioButton>
+         <RadioButton x:Name="TgaRadioButton" Content="TGA" Style="{DynamicResource GeneralRadioButtonStyle}" Margin="0,0,20,0" >
+            <RadioButton.Foreground>
+               <SolidColorBrush Color="{DynamicResource Text.Secondary}"/>
+            </RadioButton.Foreground>
+         </RadioButton>
+         <CheckBox x:Name="GenerateMksCheckBox" Content=" Decompile Sheet resource to .mks file" IsChecked="True" Style="{DynamicResource GeneralCheckBoxStyle}">
+            <CheckBox.Background>
+               <SolidColorBrush Color="{DynamicResource BG.Light}" />
+            </CheckBox.Background>
+            <CheckBox.BorderBrush>
+               <SolidColorBrush Color="{DynamicResource BG.Lighter}" />
+            </CheckBox.BorderBrush>
+            <CheckBox.Foreground>
+               <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+            </CheckBox.Foreground>
+         </CheckBox>
+      </StackPanel>
+
+      
+
+      <!-- Buttons -->
+      <StackPanel
+            Grid.Row="4"
+            Grid.Column="1"
+            Grid.ColumnSpan="2"
+            Width="170"
+            Margin="0,0,5,0"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal" Height="30" VerticalAlignment="Bottom">
+         <Button
+                x:Name="CancelButton"
+                Width="75"
+                Margin="5"
+                Click="CancelButton_Click"
+                Content="Cancel"
+                Style="{DynamicResource GeneralButtonStyle}">
+            <Button.Foreground>
+               <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+            </Button.Foreground>
+            <Button.BorderBrush>
+               <SolidColorBrush Color="{DynamicResource BG.Lighter}" />
+            </Button.BorderBrush>
+            <Button.Background>
+               <SolidColorBrush Color="{DynamicResource BG.Light}" />
+            </Button.Background>
+         </Button>
+         <Button
+                x:Name="DecompileButton"
+                Width="75"
+                Margin="5"
+                Click="DecompileButton_Click"
+                Content="Decompile"
+                Style="{DynamicResource GeneralButtonStyle}">
+            <Button.Foreground>
+               <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+            </Button.Foreground>
+            <Button.BorderBrush>
+               <SolidColorBrush Color="{DynamicResource BG.Lighter}" />
+            </Button.BorderBrush>
+            <Button.Background>
+               <SolidColorBrush Color="{DynamicResource BG.Light}" />
+            </Button.Background>
+         </Button>
+      </StackPanel>
+   </Grid>
+</Window>

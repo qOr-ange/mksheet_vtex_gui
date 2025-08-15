@@ -137,7 +137,6 @@ namespace ValveSpriteSheetUtil
          spriteSheetManager.OpenMKSFileForEditing();
          ToggleDimmerOverlay();
       }
-
       private void SettingsButton_Click(object sender, RoutedEventArgs e)
       {
          var settings = new SettingsWindow();
@@ -145,7 +144,6 @@ namespace ValveSpriteSheetUtil
          {
          }
       }
-
       private async void HelpButton_Click(object sender, RoutedEventArgs e)
       {
          var assembly = Assembly.GetExecutingAssembly();
@@ -199,6 +197,9 @@ namespace ValveSpriteSheetUtil
             MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
          }
       }
-
+      private void DecompileSheetButton_Click(object sender, RoutedEventArgs e) {
+         var decompileWindow = new DecompileSheetWindow();
+         decompileWindow.ShowDialog();
+      }
    }
 }

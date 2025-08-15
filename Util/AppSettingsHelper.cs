@@ -21,8 +21,8 @@ namespace ValveSpriteSheetUtil.Util
          property.SetValue(appSettings, value);
       }
 
-      public static void SaveSettings() { 
-         appSettings.Save(); 
+      public static void SaveSettings() {
+         appSettings.Save();
          ConsoleLog.WriteLine("Settings saved.", Status.Success);
       }
 

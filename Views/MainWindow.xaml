@@ -235,9 +235,7 @@
          x:Name="CreateVTFButton"
          Grid.Row="6"
          Grid.ColumnSpan="2"
-         Width="454"
-         Margin="5,0,0,0"
-         HorizontalAlignment="Left"
+         Margin="5,0,200,0"
          VerticalAlignment="Center"
          Click="CreateVTFFile_Click"
          Content="Create VTF"
@@ -257,15 +255,13 @@
       <!--  VTEX Config  -->
       <Button
          Grid.Row="6"
-         Grid.Column="0"
-         Grid.ColumnSpan="2"
-         Width="179"
-         Margin="0,0,5,0"
+         Grid.Column="1"
+         Width="90"
          HorizontalAlignment="Right"
          VerticalAlignment="Center"
          Click="OpenVtexConfig_Click"
          Content="VTEX Config"
-         Style="{DynamicResource GeneralButtonStyle}">
+         Style="{DynamicResource GeneralButtonStyle}" Margin="0,0,5,0">
          <Button.Foreground>
             <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
          </Button.Foreground>
@@ -412,7 +408,7 @@
          x:Name="OpenMKSButton"
          Grid.Row="5"
          Grid.ColumnSpan="2"
-         Width="89"
+         Width="90"
          Margin="0,0,5,0"
          HorizontalAlignment="Right"
          VerticalAlignment="Center"
@@ -452,6 +448,26 @@
             Content="Waiting..."
             Foreground="{DynamicResource Brush.Text.Secondary}" />
       </Grid>
+      <Button
+   x:Name="DecompileSheetButton"
+   Grid.Row="6"
+   Width="90"
+   HorizontalAlignment="Right"
+   VerticalAlignment="Center"
+   Click="DecompileSheetButton_Click"
+   Content="Decompile VTF"
+   Style="{DynamicResource GeneralButtonStyle}" Grid.Column="1" Margin="0,0,103,0">
+         <Button.Foreground>
+            <SolidColorBrush Color="{DynamicResource Text.Secondary}" />
+         </Button.Foreground>
+         <Button.BorderBrush>
+            <SolidColorBrush Color="{DynamicResource BG.Lighter}" />
+         </Button.BorderBrush>
+         <Button.Background>
+            <SolidColorBrush Color="{DynamicResource BG.Light}" />
+         </Button.Background>
+      </Button>
+
       <Button
          x:Name="SettingsButton"
          Grid.Column="1"

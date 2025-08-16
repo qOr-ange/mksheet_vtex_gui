@@ -1,6 +1,6 @@
 ﻿-----
 
-# VTF\_RSRC\_SHEET — Developer Reference
+# VTF\_RSRC\_SHEET - Reference
 
   - **Resource ID**: 0x10
   - **Version**: 1
